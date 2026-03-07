@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'habits_controller.dart';
-import '../../utils/app_constants.dart';
+import 'package:mindease_app/src/app/pages/habits/habits_controller.dart';
+import 'package:mindease_app/src/app/utils/app_constants.dart';
 
 class HabitsPage extends StatelessWidget {
   const HabitsPage({super.key});

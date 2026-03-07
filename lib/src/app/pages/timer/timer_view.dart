@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'timer_controller.dart';
-import '../../utils/app_constants.dart';
+import 'package:mindease_app/src/app/pages/timer/timer_controller.dart';
+import 'package:mindease_app/src/app/utils/app_constants.dart';
 
 class TimerPage extends StatelessWidget {
   const TimerPage({super.key});

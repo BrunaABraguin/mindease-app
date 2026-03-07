@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'focus_mode_controller.dart';
-import '../../utils/app_constants.dart';
+import 'package:mindease_app/src/app/pages/focus_mode/focus_mode_controller.dart';
+import 'package:mindease_app/src/app/utils/app_constants.dart';
 
 class FocusModePage extends StatelessWidget {
   const FocusModePage({super.key});

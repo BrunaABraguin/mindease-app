@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'missions_controller.dart';
-import '../../utils/app_constants.dart';
+import 'package:mindease_app/src/app/pages/missions/missions_controller.dart';
+import 'package:mindease_app/src/app/utils/app_constants.dart';
 
 class MissionsPage extends StatelessWidget {
   const MissionsPage({super.key});
