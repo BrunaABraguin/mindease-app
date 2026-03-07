@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'package:mindease_app/firebase_options.dart';
+import 'package:mindease_app/theme.dart';
+import 'package:mindease_app/src/app/navigator.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,88 +49,15 @@ class AppView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeData>(
       builder: (_, theme) {
-        return MaterialApp(theme: theme, home: const CounterPage());
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: theme,
+          home: AppNavigator(
+            onToggleTheme: context.read<ThemeCubit>().toggleTheme,
+          ),
+        );
       },
     );
-  }
-}
-
-class CounterPage extends StatelessWidget {
-  const CounterPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => CounterBloc(),
-      child: const CounterView(),
-    );
-  }
-}
-
-class CounterView extends StatelessWidget {
-  const CounterView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Counter')),
-      body: Center(
-        child: BlocBuilder<CounterBloc, int>(
-          builder: (context, count) {
-            return Text(
-              '$count',
-              style: Theme.of(context).textTheme.displayLarge,
-            );
-          },
-        ),
-      ),
-      floatingActionButton: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () {
-              context.read<CounterBloc>().add(CounterIncrementPressed());
-            },
-          ),
-          const SizedBox(height: 4),
-          FloatingActionButton(
-            child: const Icon(Icons.remove),
-            onPressed: () {
-              context.read<CounterBloc>().add(CounterDecrementPressed());
-            },
-          ),
-          const SizedBox(height: 4),
-          FloatingActionButton(
-            child: const Icon(Icons.brightness_6),
-            onPressed: () {
-              context.read<ThemeCubit>().toggleTheme();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Event being processed by [CounterBloc].
-abstract class CounterEvent {}
-
-/// Notifies bloc to increment state.
-class CounterIncrementPressed extends CounterEvent {}
-
-/// Notifies bloc to decrement state.
-class CounterDecrementPressed extends CounterEvent {}
-
-/// {@template counter_bloc}
-/// A simple [Bloc] that manages an `int` as its state.
-/// {@endtemplate}
-class CounterBloc extends Bloc<CounterEvent, int> {
-  /// {@macro counter_bloc}
-  CounterBloc() : super(0) {
-    on<CounterIncrementPressed>((event, emit) => emit(state + 1));
-    on<CounterDecrementPressed>((event, emit) => emit(state - 1));
   }
 }
 
@@ -139,9 +68,9 @@ class ThemeCubit extends Cubit<ThemeData> {
   /// {@macro brightness_cubit}
   ThemeCubit() : super(_lightTheme);
 
-  static final _lightTheme = ThemeData.light();
+  static final _lightTheme = AppTheme.lightTheme;
 
-  static final _darkTheme = ThemeData.dark();
+  static final _darkTheme = AppTheme.darkTheme;
 
   /// Toggles the current brightness between light and dark.
   void toggleTheme() {
