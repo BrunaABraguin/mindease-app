@@ -1,18 +1,18 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Bloc.observer = const AppBlocObserver();
   runApp(const App());
 }
 
-/// {@template app_bloc_observer}
-/// Custom [BlocObserver] that observes all bloc and cubit state changes.
-/// {@endtemplate}
 class AppBlocObserver extends BlocObserver {
-  /// {@macro app_bloc_observer}
   const AppBlocObserver();
 
   @override
@@ -31,14 +31,7 @@ class AppBlocObserver extends BlocObserver {
   }
 }
 
-/// {@template app}
-/// A [StatelessWidget] that:
-/// * uses [bloc](https://pub.dev/packages/bloc) and
-/// [flutter_bloc](https://pub.dev/packages/flutter_bloc)
-/// to manage the state of a counter and the app theme.
-/// {@endtemplate}
 class App extends StatelessWidget {
-  /// {@macro app}
   const App({super.key});
 
   @override
@@ -47,14 +40,7 @@ class App extends StatelessWidget {
   }
 }
 
-/// {@template app_view}
-/// A [StatelessWidget] that:
-/// * reacts to state changes in the [ThemeCubit]
-/// and updates the theme of the [MaterialApp].
-/// * renders the [CounterPage].
-/// {@endtemplate}
 class AppView extends StatelessWidget {
-  /// {@macro app_view}
   const AppView({super.key});
 
   @override
@@ -67,12 +53,7 @@ class AppView extends StatelessWidget {
   }
 }
 
-/// {@template counter_page}
-/// A [StatelessWidget] that:
-/// * provides a [CounterBloc] to the [CounterView].
-/// {@endtemplate}
 class CounterPage extends StatelessWidget {
-  /// {@macro counter_page}
   const CounterPage({super.key});
 
   @override
@@ -84,12 +65,7 @@ class CounterPage extends StatelessWidget {
   }
 }
 
-/// {@template counter_view}
-/// A [StatelessWidget] that:
-/// * demonstrates how to consume and interact with a [CounterBloc].
-/// {@endtemplate}
 class CounterView extends StatelessWidget {
-  /// {@macro counter_view}
   const CounterView({super.key});
 
   @override
