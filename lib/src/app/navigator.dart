@@ -146,15 +146,15 @@ class _AppNavigatorState extends State<AppNavigator> {
     return _pageCache.putIfAbsent(index, () {
       switch (index) {
         case 0:
-          return TimerPage();
+          return const TimerPage();
         case 1:
-          return HabitsPage();
+          return const HabitsPage();
         case 2:
-          return TasksPage();
+          return const TasksPage();
         case 3:
-          return MissionsPage();
+          return const MissionsPage();
         default:
-          return TimerPage();
+          return const TimerPage();
       }
     });
   }

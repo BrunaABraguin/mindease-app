@@ -1,3 +1,13 @@
+# Sumário
+
+1. [Introdução](#introdução)
+2. [Instalação](#instalação)
+3. [Configuração](#configuração)
+4. [Estrutura do Projeto](#estrutura-do-projeto)
+5. [Como Contribuir](#como-contribuir)
+6. [Testes](#testes)
+7. [Licença](#licença)
+
 # MindEase App 🧠✨
 
 Um aplicativo Flutter moderno para bem-estar mental desenvolvido com arquitetura limpa e gerenciamento de estado BLoC.
@@ -121,16 +131,8 @@ flutter pub get
 ### 4. Execute o aplicativo
 
 ```bash
-# Debug mode
-flutter run
-
-# Release mode
-flutter run --release
-
-# Para uma plataforma específica
-flutter run -d chrome  # Web
-flutter run -d android # Android
-flutter run -d ios     # iOS
+# web-driver
+flutter run -d web-server --web-port=8080
 ```
 
 ## 🔧 Scripts Úteis
