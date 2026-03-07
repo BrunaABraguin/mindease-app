@@ -1,0 +1,143 @@
+name: 'Flutter Test and Coverage'
+description: 'Runs Flutter tests with coverage analysis and detailed reporting'
+author: 'MindEase Team'
+
+inputs:
+  flutter-channel:
+    description: 'Flutter channel to use (stable, beta, dev)'
+    required: false
+    default: 'stable'
+  minimum-coverage:
+    description: 'Minimum coverage percentage required'
+    required: false
+    default: '70'
+  sonar-token:
+    description: 'SonarCloud token for code analysis'
+    required: false
+  sonar-organization:
+    description: 'SonarCloud organization'
+    required: false
+
+outputs:
+  coverage-percentage:
+    description: 'Overall coverage percentage'
+    value: ${{ steps.coverage.outputs.percentage }}
+  tests-passed:
+    description: 'Whether all tests passed'
+    value: ${{ steps.tests.outputs.passed }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: ${{ inputs.flutter-channel }}
+    
+    - name: Install dependencies
+      shell: bash
+      run: flutter pub get
+    
+    - name: Run tests with coverage
+      id: tests
+      shell: bash
+      run: |
+        echo "🧪 Running Flutter tests with coverage..."
+        flutter test --coverage 2>&1 | tee test_output.log
+        
+        # Verifica se os testes passaram
+        if [ ${PIPESTATUS[0]} -ne 0 ]; then
+          echo "::error::❌ Tests failed! Please fix all failing tests before proceeding."
+          echo "passed=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+        
+        echo "✅ All tests passed!"
+        echo "passed=true" >> $GITHUB_OUTPUT
+    
+    - name: Analyze test coverage
+      id: coverage
+      shell: bash
+      run: |
+        echo "📊 Analyzing test coverage..."
+        
+        if [ ! -f coverage/lcov.info ]; then
+          echo "::error::Coverage file not found! Tests must generate coverage report."
+          exit 1
+        fi
+        
+        # Conta linhas totais e cobertas no arquivo lcov.info
+        LINES_FOUND=$(grep -c "^LF:" coverage/lcov.info || echo "0")
+        LINES_HIT=$(grep -c "^LH:" coverage/lcov.info || echo "0")
+        
+        if [ $LINES_FOUND -gt 0 ]; then
+          # Calcula cobertura total usando awk (mais compatível)
+          TOTAL_LINES=$(grep "^LF:" coverage/lcov.info | awk -F: '{sum += $2} END {print sum}')
+          HIT_LINES=$(grep "^LH:" coverage/lcov.info | awk -F: '{sum += $2} END {print sum}')
+          
+          if [ $TOTAL_LINES -gt 0 ]; then
+            COVERAGE_PERCENT=$(awk "BEGIN {printf \"%.1f\", $HIT_LINES * 100 / $TOTAL_LINES}")
+            echo "📈 Coverage Summary:"
+            echo "   • Total lines: $TOTAL_LINES"
+            echo "   • Covered lines: $HIT_LINES"
+            echo "   • Coverage percentage: ${COVERAGE_PERCENT}%"
+            
+            # Define meta mínima de cobertura
+            MIN_COVERAGE=${{ inputs.minimum-coverage }}
+            COVERAGE_INT=$(awk "BEGIN {printf \"%.0f\", $COVERAGE_PERCENT}")
+            if [ $COVERAGE_INT -ge $MIN_COVERAGE ]; then
+              echo "✅ Coverage meets minimum requirement (${MIN_COVERAGE}%)"
+            else
+              echo "⚠️ Coverage below recommended minimum (${MIN_COVERAGE}%)"
+            fi
+            
+            # Output para outros steps
+            echo "percentage=${COVERAGE_PERCENT}" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ No testable lines found"
+            echo "percentage=0" >> $GITHUB_OUTPUT
+          fi
+        else
+          echo "⚠️ Coverage data format not recognized"
+          echo "percentage=0" >> $GITHUB_OUTPUT
+        fi
+        
+        echo "✅ Coverage report generated successfully"
+        echo "📁 Coverage details saved in coverage/lcov.info"
+    
+    - name: Show files with low coverage
+      shell: bash
+      run: |
+        MIN_COVERAGE=${{ inputs.minimum-coverage }}
+        echo "🔍 Files with coverage below ${MIN_COVERAGE}%:"
+        echo "================================"
+        
+        # Processa o arquivo lcov.info para encontrar arquivos com baixa cobertura
+        awk -v min_cov="$MIN_COVERAGE" '
+        /^SF:/ { 
+          file = substr($0, 4); 
+          gsub(/\\/, "/", file);  # Convert Windows paths
+        }
+        /^LF:/ { total_lines = $0; gsub(/LF:/, "", total_lines) }
+        /^LH:/ { 
+          hit_lines = $0; 
+          gsub(/LH:/, "", hit_lines);
+          if (total_lines > 0) {
+            coverage = (hit_lines * 100) / total_lines;
+            if (coverage < min_cov) {
+              printf "   📄 %s: %.1f%% (%d/%d lines)\n", file, coverage, hit_lines, total_lines;
+            }
+          }
+        }
+        ' coverage/lcov.info | head -10
+        
+        echo ""
+        echo "💡 Tip: Add more tests for files with low coverage!"
+    
+    - name: SonarCloud Analysis 
+      if: ${{ inputs.sonar-token != '' }}
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
+        SONAR_ORGANIZATION: ${{ inputs.sonar-organization }}

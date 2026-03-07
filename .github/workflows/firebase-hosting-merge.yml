@@ -9,6 +9,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  test_and_quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      
+      - name: Run Flutter tests and coverage analysis
+        uses: ./.github/actions/test-and-coverage
+        with:
+          flutter-channel: stable
+          minimum-coverage: 60
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+      
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
