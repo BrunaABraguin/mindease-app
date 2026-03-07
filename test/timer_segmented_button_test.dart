@@ -1,23 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mindease_app/src/app/pages/timer/timer_segmented_button.dart';
+import 'package:mindease_app/src/app/pages/timer/widgets/timer_segmented_button.dart';
+
+class _TestWrapper extends StatefulWidget {
+  const _TestWrapper();
+
+  @override
+  State<_TestWrapper> createState() => _TestWrapperState();
+}
+
+class _TestWrapperState extends State<_TestWrapper> {
+  int selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return TimerSegmentedButton(
+      selectedIndex: selectedIndex,
+      onChanged: (index) {
+        setState(() {
+          selectedIndex = index;
+        });
+      },
+    );
+  }
+}
 
 void main() {
   testWidgets('TimerSegmentedButton exibe opções e responde ao toque', (
     tester,
   ) async {
-    int selectedIndex = 0;
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: TimerSegmentedButton(
-            selectedIndex: selectedIndex,
-            onChanged: (index) {
-              selectedIndex = index;
-            },
-          ),
-        ),
-      ),
+      const MaterialApp(home: Scaffold(body: _TestWrapper())),
     );
 
     // Verifica se as três opções estão presentes
@@ -28,12 +41,18 @@ void main() {
     // Toca na opção "Pausa curta"
     await tester.tap(find.text('Pausa curta'));
     await tester.pumpAndSettle();
-    // O selectedIndex deve ser alterado para 1
-    expect(selectedIndex, 1);
+    // O selectedIndex deve ser alterado para 1 (ícone selecionado)
+    final selected = tester
+        .widget<SegmentedButton<int>>(find.byType(SegmentedButton<int>))
+        .selected;
+    expect(selected, contains(1));
 
     // Toca na opção "Pausa longa"
     await tester.tap(find.text('Pausa longa'));
     await tester.pumpAndSettle();
-    expect(selectedIndex, 2);
+    final selected2 = tester
+        .widget<SegmentedButton<int>>(find.byType(SegmentedButton<int>))
+        .selected;
+    expect(selected2, contains(2));
   });
 }

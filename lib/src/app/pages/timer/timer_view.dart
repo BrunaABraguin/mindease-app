@@ -3,18 +3,41 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindease_app/src/app/pages/focus_mode/focus_mode_view.dart';
 import 'package:mindease_app/src/app/pages/timer/timer_controller.dart';
-import 'package:mindease_app/src/app/pages/timer/timer_segmented_button.dart';
+import 'package:mindease_app/src/app/pages/timer/widgets/timer_segmented_button.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/app/utils/help_texts.dart';
 import 'package:mindease_app/src/app/widgets/focus_mode_button.dart';
 import 'package:mindease_app/src/app/widgets/help_icon_button.dart';
+import 'package:mindease_app/src/data/repositories/timer_repository.dart' as repo;
+import 'package:mindease_app/src/domain/entities/timer_entity.dart';
+import 'package:mindease_app/src/domain/usecases/timer_mode_usecases.dart';
 
-class TimerPage extends StatelessWidget {
-  const TimerPage({super.key});
+class TimerPage extends StatefulWidget {
+
+  const TimerPage({
+    super.key,
+    required this.timerRepository,
+    required this.getCurrentModeIndexUseCase,
+    required this.setCurrentModeIndexUseCase,
+  });
+  final repo.TimerRepository timerRepository;
+  final GetCurrentModeIndexUseCase getCurrentModeIndexUseCase;
+  final SetCurrentModeIndexUseCase setCurrentModeIndexUseCase;
 
   @override
+  State<TimerPage> createState() => _TimerPageState();
+}
+
+class _TimerPageState extends State<TimerPage> {
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (_) => TimerCubit(), child: const TimerView());
+    return BlocProvider(
+      create: (_) => TimerCubit(
+        getCurrentModeIndexUseCase: widget.getCurrentModeIndexUseCase,
+        setCurrentModeIndexUseCase: widget.setCurrentModeIndexUseCase,
+      ),
+      child: const TimerView(),
+    );
   }
 }
 
@@ -32,8 +55,6 @@ class _TimerViewState extends State<TimerView> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }
-
-  int _selectedTab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +76,7 @@ class _TimerViewState extends State<TimerView> {
           ),
         ],
       ),
-      body: BlocBuilder<TimerCubit, TimerState>(
+      body: BlocBuilder<TimerCubit, TimerEntity>(
         builder: (context, state) {
           return Center(
             child: Column(
@@ -68,11 +89,9 @@ class _TimerViewState extends State<TimerView> {
                 ),
                 const SizedBox(height: AppSizes.spacingM),
                 TimerSegmentedButton(
-                  selectedIndex: _selectedTab,
+                  selectedIndex: state.currentModeIndex,
                   onChanged: (index) {
-                    setState(() {
-                      _selectedTab = index;
-                    });
+                    context.read<TimerCubit>().setCurrentModeIndex(index);
                   },
                 ),
                 const SizedBox(height: AppSizes.spacingL),

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
 
-class TimerSegmentedButton extends StatefulWidget {
+class TimerSegmentedButton extends StatelessWidget {
   const TimerSegmentedButton({
     super.key,
     required this.selectedIndex,
     required this.onChanged,
   });
+
   final int selectedIndex;
   final ValueChanged<int> onChanged;
 
-  @override
-  State<TimerSegmentedButton> createState() => _TimerSegmentedButtonState();
-}
-
-class _TimerSegmentedButtonState extends State<TimerSegmentedButton> {
-  final List<String> _timerOptions = ['Foco', 'Pausa curta', 'Pausa longa'];
-  final List<IconData> _timerIcons = [
+  static const List<String> _timerOptions = [
+    'Foco',
+    'Pausa curta',
+    'Pausa longa',
+  ];
+  static const List<IconData> _timerIcons = [
     AppIcons.timer, // Foco
     Icons.coffee, // Pausa curta
     Icons.hotel, // Pausa longa
@@ -34,9 +34,9 @@ class _TimerSegmentedButtonState extends State<TimerSegmentedButton> {
           icon: Icon(_timerIcons[index], color: colorScheme.primary),
         ),
       ),
-      selected: <int>{widget.selectedIndex},
+      selected: <int>{selectedIndex},
       onSelectionChanged: (newSelection) {
-        widget.onChanged(newSelection.first);
+        onChanged(newSelection.first);
       },
       style: ButtonStyle(
         padding: WidgetStateProperty.all(
