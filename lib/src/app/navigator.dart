@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_app/src/app/pages/profile/profile_view.dart';
 
 import 'package:mindease_app/src/app/pages/timer/timer_view.dart';
 import 'package:mindease_app/src/app/pages/habits/habits_view.dart';
@@ -44,6 +45,11 @@ class _AppNavigatorState extends State<AppNavigator> {
       label: AppStrings.missions,
       icon: AppIcons.missionsOutlined,
       selectedIcon: AppIcons.missions,
+    ),
+    _AppDestination(
+      label: AppStrings.profile,
+      icon: AppIcons.profileOutlined,
+      selectedIcon: AppIcons.profile,
     ),
   ];
 
@@ -153,6 +159,8 @@ class _AppNavigatorState extends State<AppNavigator> {
           return const TasksPage();
         case 3:
           return const MissionsPage();
+        case 4:
+          return const ProfilePage();
         default:
           return const TimerPage();
       }

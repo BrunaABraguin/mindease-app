@@ -11,5 +11,73 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
-    avoid_print: false
+     # Boas práticas de imports
     always_use_package_imports: true
+    avoid_relative_lib_imports: true
+
+    # Organização e legibilidade
+    sort_pub_dependencies: true
+    sort_constructors_first: true
+    sort_unnamed_constructors_first: true
+    prefer_const_constructors: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_const_declarations: true
+    prefer_final_locals: true
+    prefer_final_in_for_each: true
+    prefer_interpolation_to_compose_strings: true
+
+    # Segurança e robustez
+    avoid_empty_else: true
+    avoid_returning_null_for_void: true
+    avoid_types_on_closure_parameters: true
+    avoid_unnecessary_containers: true
+    avoid_init_to_null: true
+    avoid_redundant_argument_values: true
+    avoid_return_types_on_setters: true
+    avoid_shadowing_type_parameters: true
+    avoid_unused_constructor_parameters: true
+    avoid_web_libraries_in_flutter: true
+    avoid_bool_literals_in_conditional_expressions: true
+    avoid_catches_without_on_clauses: true
+    avoid_catching_errors: true
+    avoid_classes_with_only_static_members: true
+
+    # Performance
+    prefer_spread_collections: true
+    prefer_collection_literals: true
+    prefer_foreach: true
+    prefer_if_elements_to_conditional_expressions: true
+    prefer_inlined_adds: true
+
+    # Estilo
+    camel_case_types: true
+    constant_identifier_names: true
+    file_names: true
+    library_prefixes: true
+    non_constant_identifier_names: true
+    unnecessary_brace_in_string_interps: true
+    unnecessary_const: true
+    unnecessary_new: true
+    unnecessary_late: true
+    unnecessary_null_aware_assignments: true
+    unnecessary_null_in_if_null_operators: true
+    unnecessary_overrides: true
+    unnecessary_parenthesis: true
+    unnecessary_raw_strings: true
+    unnecessary_string_escapes: true
+    unnecessary_string_interpolations: true
+
+    # Flutter específicas
+    use_key_in_widget_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_final_fields: true
+    prefer_typing_uninitialized_variables: true
+    sized_box_for_whitespace: true
+    use_full_hex_values_for_flutter_colors: true
+    use_rethrow_when_possible: true
+    use_setters_to_change_properties: true
+    use_super_parameters: true
+
+    # Outras úteis
+    directives_ordering: true
+    lines_longer_than_80_chars: false # Ative se quiser limitar o tamanho das linhas
