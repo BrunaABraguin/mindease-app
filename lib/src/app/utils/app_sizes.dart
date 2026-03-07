@@ -1,6 +1,11 @@
 /// App size constants
 class AppSizes {
   AppSizes._();
+  // Timer segmented button
+  static const double timerSegmentedButtonHeight = 56.0;
+  static const double timerSegmentedButtonMinWidth = 80.0;
+  static const double timerSegmentedButtonPaddingV = 16.0;
+  static const double timerSegmentedButtonPaddingH = 20.0;
 
   // Icon sizes
   static const double iconLarge = 80.0;

@@ -1,0 +1,99 @@
+name: 'Create env file'
+description: 'Reusable action to create the env file with Firebase secrets.'
+inputs:
+  FIREBASE_API_KEY_WEB:
+    description: 'Firebase API Key for Web'
+    required: true
+  FIREBASE_API_KEY_ANDROID:
+    description: 'Firebase API Key for Android'
+    required: true
+  FIREBASE_API_KEY_IOS:
+    description: 'Firebase API Key for iOS'
+    required: true
+  FIREBASE_PROJECT_ID:
+    description: 'Firebase Project ID'
+    required: true
+  FIREBASE_MESSAGING_SENDER_ID:
+    description: 'Firebase Messaging Sender ID'
+    required: true
+  FIREBASE_STORAGE_BUCKET:
+    description: 'Firebase Storage Bucket'
+    required: true
+  FIREBASE_AUTH_DOMAIN:
+    description: 'Firebase Auth Domain'
+    required: true
+  FIREBASE_APP_ID_WEB:
+    description: 'Firebase App ID for Web'
+    required: true
+  FIREBASE_APP_ID_ANDROID:
+    description: 'Firebase App ID for Android'
+    required: true
+  FIREBASE_APP_ID_IOS:
+    description: 'Firebase App ID for iOS'
+    required: true
+  FIREBASE_APP_ID_WINDOWS:
+    description: 'Firebase App ID for Windows'
+    required: true
+  FIREBASE_MEASUREMENT_ID_WEB:
+    description: 'Firebase Measurement ID for Web'
+    required: true
+  FIREBASE_MEASUREMENT_ID_WINDOWS:
+    description: 'Firebase Measurement ID for Windows'
+    required: true
+  FIREBASE_IOS_CLIENT_ID:
+    description: 'Firebase iOS Client ID'
+    required: true
+  FIREBASE_IOS_BUNDLE_ID:
+    description: 'Firebase iOS Bundle ID'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Create env file
+      shell: bash
+      env:
+        FIREBASE_API_KEY_WEB: ${{ inputs.FIREBASE_API_KEY_WEB }}
+        FIREBASE_API_KEY_ANDROID: ${{ inputs.FIREBASE_API_KEY_ANDROID }}
+        FIREBASE_API_KEY_IOS: ${{ inputs.FIREBASE_API_KEY_IOS }}
+        FIREBASE_PROJECT_ID: ${{ inputs.FIREBASE_PROJECT_ID }}
+        FIREBASE_MESSAGING_SENDER_ID: ${{ inputs.FIREBASE_MESSAGING_SENDER_ID }}
+        FIREBASE_STORAGE_BUCKET: ${{ inputs.FIREBASE_STORAGE_BUCKET }}
+        FIREBASE_AUTH_DOMAIN: ${{ inputs.FIREBASE_AUTH_DOMAIN }}
+        FIREBASE_APP_ID_WEB: ${{ inputs.FIREBASE_APP_ID_WEB }}
+        FIREBASE_APP_ID_ANDROID: ${{ inputs.FIREBASE_APP_ID_ANDROID }}
+        FIREBASE_APP_ID_IOS: ${{ inputs.FIREBASE_APP_ID_IOS }}
+        FIREBASE_APP_ID_WINDOWS: ${{ inputs.FIREBASE_APP_ID_WINDOWS }}
+        FIREBASE_MEASUREMENT_ID_WEB: ${{ inputs.FIREBASE_MEASUREMENT_ID_WEB }}
+        FIREBASE_MEASUREMENT_ID_WINDOWS: ${{ inputs.FIREBASE_MEASUREMENT_ID_WINDOWS }}
+        FIREBASE_IOS_CLIENT_ID: ${{ inputs.FIREBASE_IOS_CLIENT_ID }}
+        FIREBASE_IOS_BUNDLE_ID: ${{ inputs.FIREBASE_IOS_BUNDLE_ID }}
+      run: |
+        cat << EOF > env
+        # Firebase API Keys for Production
+        FIREBASE_API_KEY_WEB=$FIREBASE_API_KEY_WEB
+        FIREBASE_API_KEY_ANDROID=$FIREBASE_API_KEY_ANDROID
+        FIREBASE_API_KEY_IOS=$FIREBASE_API_KEY_IOS
+
+        # Firebase Project Configuration
+        FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
+        FIREBASE_MESSAGING_SENDER_ID=$FIREBASE_MESSAGING_SENDER_ID
+        FIREBASE_STORAGE_BUCKET=$FIREBASE_STORAGE_BUCKET
+        FIREBASE_AUTH_DOMAIN=$FIREBASE_AUTH_DOMAIN
+
+        # Firebase App IDs
+        FIREBASE_APP_ID_WEB=$FIREBASE_APP_ID_WEB
+        FIREBASE_APP_ID_ANDROID=$FIREBASE_APP_ID_ANDROID
+        FIREBASE_APP_ID_IOS=$FIREBASE_APP_ID_IOS
+        FIREBASE_APP_ID_WINDOWS=$FIREBASE_APP_ID_WINDOWS
+
+        # Additional Firebase Configuration
+        FIREBASE_MEASUREMENT_ID_WEB=$FIREBASE_MEASUREMENT_ID_WEB
+        FIREBASE_MEASUREMENT_ID_WINDOWS=$FIREBASE_MEASUREMENT_ID_WINDOWS
+        FIREBASE_IOS_CLIENT_ID=$FIREBASE_IOS_CLIENT_ID
+        FIREBASE_IOS_BUNDLE_ID=$FIREBASE_IOS_BUNDLE_ID
+        EOF
+    - name: Upload env artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: env
+        path: env

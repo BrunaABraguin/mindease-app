@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindease_app/src/app/pages/focus_mode/focus_mode_view.dart';
 import 'package:mindease_app/src/app/pages/timer/timer_controller.dart';
+import 'package:mindease_app/src/app/pages/timer/timer_segmented_button.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/app/utils/help_texts.dart';
 import 'package:mindease_app/src/app/widgets/focus_mode_button.dart';
@@ -32,15 +33,18 @@ class _TimerViewState extends State<TimerView> {
     super.dispose();
   }
 
+  int _selectedTab = 0;
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         actions: [
           const HelpIconButton(
             title: HelpTexts.focusModeTitle,
             description: HelpTexts.focusModeDescription,
-            size: 20,
+            size: AppSizes.iconSmall,
           ),
           FocusModeButton(
             onPressed: () {
@@ -57,10 +61,25 @@ class _TimerViewState extends State<TimerView> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                const HelpIconButton(
+                  title: HelpTexts.timerTitle,
+                  description: HelpTexts.timerDescription,
+                  size: AppSizes.iconSmall,
+                ),
+                const SizedBox(height: AppSizes.spacingM),
+                TimerSegmentedButton(
+                  selectedIndex: _selectedTab,
+                  onChanged: (index) {
+                    setState(() {
+                      _selectedTab = index;
+                    });
+                  },
+                ),
+                const SizedBox(height: AppSizes.spacingL),
                 Icon(
                   AppIcons.timer,
                   size: AppSizes.iconLarge,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: colorScheme.primary,
                 ),
                 const SizedBox(height: AppSizes.spacingL),
                 Text(
