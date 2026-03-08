@@ -9,11 +9,33 @@ import 'package:mindease_app/src/data/repositories/timer_repository.dart'
 import 'package:mindease_app/theme.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: "env");
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  Bloc.observer = const AppBlocObserver();
-  runApp(const App());
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    await dotenv.load(fileName: "env");
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    Bloc.observer = const AppBlocObserver();
+    runApp(const Mindease());
+  } catch (error, stack) {
+    debugPrint('[Bootstrap error] $error\n$stack');
+    runApp(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(
+                'Erro ao inicializar o app:\n$error',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class AppBlocObserver extends BlocObserver {
@@ -35,8 +57,8 @@ class AppBlocObserver extends BlocObserver {
   }
 }
 
-class App extends StatelessWidget {
-  const App({super.key});
+class Mindease extends StatelessWidget {
+  const Mindease({super.key});
 
   @override
   Widget build(BuildContext context) {
