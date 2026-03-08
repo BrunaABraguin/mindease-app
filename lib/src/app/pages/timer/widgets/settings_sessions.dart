@@ -32,13 +32,13 @@ class SettingsSessions extends StatelessWidget {
             Icon(
               Icons.auto_awesome,
               color: iconColor,
-              size: AppSizes.iconSmall + 4,
+              size: AppSizes.iconSmall,
             ),
             const SizedBox(width: AppSizes.spacingXs),
             IconButton(
               icon: const Icon(Icons.remove_circle_outline),
               color: iconColor,
-              onPressed: (isRunning || totalCycles <= 10)
+              onPressed: (isRunning || totalCycles <= 1)
                   ? null
                   : onDecrement,
             ),
