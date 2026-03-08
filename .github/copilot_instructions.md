@@ -1,3 +1,20 @@
+## 6. Textos e Mensagens
+
+* Nunca escreva textos literais (hard coded) diretamente em widgets, componentes ou páginas.
+* Sempre defina textos de interface, mensagens de ajuda, tooltips, títulos, descrições e mensagens amigáveis em arquivos de constantes, como `help_texts.dart` ou arquivos similares.
+* Para adicionar um novo texto, crie uma constante no arquivo de textos e utilize-a no widget/componente correspondente.
+* Isso facilita manutenção, tradução e padronização dos textos em toda a aplicação.
+
+### Exemplo
+
+```dart
+// help_texts.dart
+static const String cyclesCompletedMessage = 'Parabéns! Você completou todos os ciclos de foco. Faça uma pausa antes de recomeçar.';
+
+// Uso no widget
+Text(HelpTexts.cyclesCompletedMessage)
+```
+
 # Instruções para uso do Copilot neste projeto
 
 ## 1. Tokens e Constantes
