@@ -16,7 +16,7 @@ Future<void> main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     Bloc.observer = const AppBlocObserver();
-    runApp(const App());
+    runApp(const Mindease());
   } catch (error, stack) {
     debugPrint('[Bootstrap error] $error\n$stack');
     runApp(
@@ -57,8 +57,8 @@ class AppBlocObserver extends BlocObserver {
   }
 }
 
-class App extends StatelessWidget {
-  const App({super.key});
+class Mindease extends StatelessWidget {
+  const Mindease({super.key});
 
   @override
   Widget build(BuildContext context) {
