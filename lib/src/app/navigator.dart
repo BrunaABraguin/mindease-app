@@ -14,12 +14,8 @@ import 'package:mindease_app/src/data/repositories/timer_repository.dart'
 class AppNavigator extends StatefulWidget {
   const AppNavigator({
     super.key,
-    this.onToggleTheme,
     required this.timerRepository,
   });
-
-  /// Callback used by the theme toggle action.
-  final VoidCallback? onToggleTheme;
 
   /// The timer repository to use.
   final repo.TimerRepository timerRepository;
@@ -82,14 +78,6 @@ class _AppNavigatorState extends State<AppNavigator> {
                     selectedIndex: _selectedIndex,
                     labelType: NavigationRailLabelType.all,
                     groupAlignment: AppSizes.navigationRailAlignment,
-                    leading: Padding(
-                      padding: const EdgeInsets.only(top: AppSizes.paddingXs),
-                      child: IconButton(
-                        tooltip: AppStrings.toggleTheme,
-                        onPressed: widget.onToggleTheme,
-                        icon: const Icon(AppIcons.theme),
-                      ),
-                    ),
                     onDestinationSelected: onSelect,
                     destinations: _destinations
                         .map(

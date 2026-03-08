@@ -9,35 +9,73 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ProfileCubit(),
-      child: const ProfileView(),
-    );
+    return const ProfileView();
   }
 }
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
   @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.profile)),
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
+          final preferences = state.preferences;
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  AppIcons.profile,
-                  size: AppSizes.iconLarge,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(height: AppSizes.spacingL),
-                Text(
-                  AppStrings.profile,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                const SizedBox(height: 32),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.teal.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.black12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'CONFIGURAÇÕES',
+                        style: TextStyle(
+                          fontSize: 12,
+                          letterSpacing: 1.2,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SwitchListTile(
+                        value: preferences.darkTheme,
+                        onChanged: (v) {
+                          context.read<ProfileCubit>().setDarkTheme(v);
+                        },
+                        title: const Text('Modo escuro'),
+                        secondary: const Icon(AppIcons.theme),
+                      ),
+                      SwitchListTile(
+                        value: preferences.showHelpIcons,
+                        onChanged: (v) =>
+                            context.read<ProfileCubit>().setShowHelpIcon(v),
+                        title: const Text('Mostrar ícone de ajuda'),
+                        secondary: const Icon(Icons.help_outline),
+                      ),
+                      SwitchListTile(
+                        value: preferences.showAnimations,
+                        onChanged: (v) =>
+                            context.read<ProfileCubit>().setShowAnimations(v),
+                        title: const Text('Mostrar animações'),
+                        secondary: const Icon(Icons.animation_outlined),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
