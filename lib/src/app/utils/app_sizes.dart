@@ -1,9 +1,25 @@
 /// App size constants
 class AppSizes {
   AppSizes._();
+  // TimerPage custom tokens
+  static const double leadingWidth = 120;
+  static const double paddingLeftFocusMode = 8.0;
+  static const double timerControlButtonsBottomPadding = 56.0;
+
+  static const double timerFontSize = 80.0;
+  // Button heights and widths
+  static const double buttonHeightSmall = 32.0;
+  static const double buttonHeightMedium = 40.0;
+  static const double buttonHeightLarge = 56.0;
+
+  static const double buttonMinWidthSmall = 80.0;
+  static const double buttonMinWidthMedium = 120.0;
+  static const double buttonMinWidthLarge = 180.0;
+
   // Timer segmented button
   static const double timerSegmentedButtonHeight = 56.0;
   static const double timerSegmentedButtonMinWidth = 80.0;
+
   static const double timerSegmentedButtonPaddingV = 16.0;
   static const double timerSegmentedButtonPaddingH = 20.0;
 

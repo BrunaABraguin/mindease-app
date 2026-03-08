@@ -15,28 +15,32 @@ class HelpIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(
-        Icons.help_outline,
-        color: Theme.of(context).iconTheme.color,
-        size: size,
+    return Semantics(
+      label: 'Ajuda:',
+      button: true,
+      child: IconButton(
+        icon: Icon(
+          Icons.help_outline,
+          color: Theme.of(context).iconTheme.color,
+          size: size,
+        ),
+        tooltip: 'Ajuda',
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(title),
+              content: Text(description),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Entendi'),
+                ),
+              ],
+            ),
+          );
+        },
       ),
-      tooltip: 'Ajuda',
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(title),
-            content: Text(description),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Entendi'),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

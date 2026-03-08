@@ -22,7 +22,7 @@ void main() {
         home: AppNavigator(timerRepository: repo.TimerRepository()),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 2));
   }
 
   testWidgets('uses bottom navigation on mobile', (tester) async {

@@ -3,12 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindease_app/src/app/pages/focus_mode/focus_mode_view.dart';
 import 'package:mindease_app/src/app/pages/timer/timer_controller.dart';
+import 'package:mindease_app/src/app/pages/timer/widgets/timer_control_buttons.dart';
 import 'package:mindease_app/src/app/pages/timer/widgets/timer_segmented_button.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/app/utils/help_texts.dart';
+import 'package:mindease_app/src/app/utils/layout_utils.dart';
 import 'package:mindease_app/src/app/widgets/focus_mode_button.dart';
 import 'package:mindease_app/src/app/widgets/help_icon_button.dart';
 import 'package:mindease_app/src/app/widgets/timer_display.dart';
+import 'package:mindease_app/src/app/widgets/vertical_timer_progress.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
 import 'package:mindease_app/src/domain/entities/timer_entity.dart';
@@ -39,19 +42,6 @@ class TimerView extends StatefulWidget {
 }
 
 class _TimerViewState extends State<TimerView> {
-  static const double _mobileMaxWidthFraction = 0.95;
-  static const double _webMaxWidthFraction = 0.5;
-
-  double _getResponsiveMaxWidth(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    const webBreakpoint = 600.0;
-    if (width < webBreakpoint) {
-      return width * _mobileMaxWidthFraction;
-    } else {
-      return width * _webMaxWidthFraction;
-    }
-  }
-
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -62,29 +52,38 @@ class _TimerViewState extends State<TimerView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          // Ícone de ajuda para o Focus Mode
-          const HelpIconButton(
-            title: HelpTexts.focusModeTitle,
-            description: HelpTexts.focusModeDescription,
-            size: AppSizes.iconSmall,
-          ),
-          // Botão para acessar o Focus Mode
-          FocusModeButton(
-            onPressed: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const FocusModePage()));
-            },
-          ),
-        ],
+        leadingWidth: AppSizes.leadingWidth,
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: AppSizes.paddingLeftFocusMode,
+              ),
+              child: FocusModeButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const FocusModePage()),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(width: AppSizes.spacingXs),
+            const HelpIconButton(
+              title: HelpTexts.focusModeTitle,
+              description: HelpTexts.focusModeDescription,
+              size: AppSizes.iconSmall,
+            ),
+          ],
+        ),
       ),
       body: BlocBuilder<TimerCubit, TimerEntity>(
         builder: (context, state) {
-          return Center(
+          return Align(
+            alignment: Alignment.topCenter,
             child: Container(
               constraints: BoxConstraints(
-                maxWidth: _getResponsiveMaxWidth(context),
+                maxWidth: getResponsiveMaxWidth(context),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -106,13 +105,54 @@ class _TimerViewState extends State<TimerView> {
                   // Timer mode selection
                   TimerSegmentedButton(
                     selectedIndex: state.currentModeIndex,
-                    onChanged: (index) {
-                      context.read<TimerCubit>().updateCurrentModeIndex(index);
-                    },
+                    onChanged: state.isRunning
+                        ? null
+                        : (index) {
+                            context.read<TimerCubit>().updateCurrentModeIndex(
+                              index,
+                            );
+                          },
+                    disabled: state.isRunning,
                   ),
                   const SizedBox(height: AppSizes.spacingL),
-                  // Timer centralizado
-                  TimerDisplay(timer: state),
+                  VerticalTimerProgress(
+                    totalSeconds: context.read<TimerCubit>().getTotalSeconds(
+                      state,
+                    ),
+                    remainingSeconds:
+                        state.remainingSeconds ??
+                        context.read<TimerCubit>().getTotalSeconds(state),
+                  ),
+                  const SizedBox(height: AppSizes.spacingM),
+                  Expanded(
+                    child: Center(child: TimerDisplay(timer: state)),
+                  ),
+                  const SizedBox(height: AppSizes.spacingXxl),
+
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: AppSizes.timerControlButtonsBottomPadding,
+                    ),
+                    child: Center(
+                      child: BlocBuilder<TimerCubit, TimerEntity>(
+                        buildWhen: (previous, current) =>
+                            previous.remainingSeconds !=
+                            current.remainingSeconds,
+                        builder: (context, _) {
+                          final cubit = context.read<TimerCubit>();
+                          return TimerControlButtons(
+                            onStartPause: () {
+                              cubit.startPauseTimer();
+                            },
+                            onReset: () {
+                              cubit.resetTimer();
+                            },
+                            isRunning: state.isRunning,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

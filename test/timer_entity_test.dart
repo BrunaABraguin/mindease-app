@@ -176,7 +176,7 @@ void main() {
       );
       expect(
         timer.toString(),
-        'TimerEntity(durations: TimerDurations(focus: 25, shortBreak: 5, longBreak: 15), currentCycle: 1, totalCycles: 4, remainingSeconds: 1500, completedSessions: 0, currentModeIndex: 0)',
+        'TimerEntity(durations: TimerDurations(focus: 25, shortBreak: 5, longBreak: 15), currentCycle: 1, totalCycles: 4, remainingSeconds: 1500, completedSessions: 0, currentModeIndex: 0, isRunning: false)',
       );
     });
 

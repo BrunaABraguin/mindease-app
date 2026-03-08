@@ -41,6 +41,7 @@ class TimerEntity {
     this.remainingSeconds,
     required this.completedSessions,
     required this.currentModeIndex,
+    this.isRunning = false,
   });
 
   final TimerDurations durations;
@@ -49,6 +50,7 @@ class TimerEntity {
   final int? remainingSeconds;
   final int completedSessions;
   final int currentModeIndex;
+  final bool isRunning;
 
   TimerEntity copyWith({
     TimerDurations? durations,
@@ -57,6 +59,7 @@ class TimerEntity {
     Object? remainingSeconds = _noValue,
     int? completedSessions,
     int? currentModeIndex,
+    bool? isRunning,
   }) {
     return TimerEntity(
       durations: durations ?? this.durations,
@@ -67,6 +70,7 @@ class TimerEntity {
           : remainingSeconds as int?,
       completedSessions: completedSessions ?? this.completedSessions,
       currentModeIndex: currentModeIndex ?? this.currentModeIndex,
+      isRunning: isRunning ?? this.isRunning,
     );
   }
 
@@ -74,7 +78,7 @@ class TimerEntity {
 
   @override
   String toString() {
-    return 'TimerEntity(durations: $durations, currentCycle: $currentCycle, totalCycles: $totalCycles, remainingSeconds: $remainingSeconds, completedSessions: $completedSessions, currentModeIndex: $currentModeIndex)';
+    return 'TimerEntity(durations: $durations, currentCycle: $currentCycle, totalCycles: $totalCycles, remainingSeconds: $remainingSeconds, completedSessions: $completedSessions, currentModeIndex: $currentModeIndex, isRunning: $isRunning)';
   }
 
   @override
@@ -87,7 +91,8 @@ class TimerEntity {
           totalCycles == other.totalCycles &&
           remainingSeconds == other.remainingSeconds &&
           completedSessions == other.completedSessions &&
-          currentModeIndex == other.currentModeIndex;
+          currentModeIndex == other.currentModeIndex &&
+          isRunning == other.isRunning;
 
   @override
   int get hashCode =>
@@ -96,5 +101,6 @@ class TimerEntity {
       totalCycles.hashCode ^
       (remainingSeconds?.hashCode ?? 0) ^
       completedSessions.hashCode ^
-      currentModeIndex.hashCode;
+      currentModeIndex.hashCode ^
+      isRunning.hashCode;
 }
