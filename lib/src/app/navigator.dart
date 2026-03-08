@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mindease_app/src/app/pages/profile/profile_view.dart';
-
-import 'package:mindease_app/src/app/pages/timer/timer_view.dart';
 import 'package:mindease_app/src/app/pages/habits/habits_view.dart';
-import 'package:mindease_app/src/app/pages/tasks/tasks_view.dart';
 import 'package:mindease_app/src/app/pages/missions/missions_view.dart';
+import 'package:mindease_app/src/app/pages/profile/profile_view.dart';
+import 'package:mindease_app/src/app/pages/tasks/tasks_view.dart';
+import 'package:mindease_app/src/app/pages/timer/timer_view.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
+import 'package:mindease_app/src/data/repositories/timer_repository.dart'
+    as repo;
+import 'package:mindease_app/src/domain/usecases/timer_mode_usecases.dart';
 
 /// Main adaptive navigation shell for the app.
 ///
@@ -150,9 +152,21 @@ class _AppNavigatorState extends State<AppNavigator> {
 
   Widget _buildPage(int index) {
     return _pageCache.putIfAbsent(index, () {
+      // Timer dependencies
+      final timerRepository = repo.TimerRepository();
+      final getCurrentModeIndexUseCase = GetCurrentModeIndexUseCase(
+        timerRepository,
+      );
+      final setCurrentModeIndexUseCase = SetCurrentModeIndexUseCase(
+        timerRepository,
+      );
       switch (index) {
         case 0:
-          return const TimerPage();
+          return TimerPage(
+            timerRepository: timerRepository,
+            getCurrentModeIndexUseCase: getCurrentModeIndexUseCase,
+            setCurrentModeIndexUseCase: setCurrentModeIndexUseCase,
+          );
         case 1:
           return const HabitsPage();
         case 2:
@@ -162,7 +176,11 @@ class _AppNavigatorState extends State<AppNavigator> {
         case 4:
           return const ProfilePage();
         default:
-          return const TimerPage();
+          return TimerPage(
+            timerRepository: timerRepository,
+            getCurrentModeIndexUseCase: getCurrentModeIndexUseCase,
+            setCurrentModeIndexUseCase: setCurrentModeIndexUseCase,
+          );
       }
     });
   }

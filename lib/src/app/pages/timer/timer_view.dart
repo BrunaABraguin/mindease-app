@@ -8,12 +8,12 @@ import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/app/utils/help_texts.dart';
 import 'package:mindease_app/src/app/widgets/focus_mode_button.dart';
 import 'package:mindease_app/src/app/widgets/help_icon_button.dart';
-import 'package:mindease_app/src/data/repositories/timer_repository.dart' as repo;
+import 'package:mindease_app/src/data/repositories/timer_repository.dart'
+    as repo;
 import 'package:mindease_app/src/domain/entities/timer_entity.dart';
 import 'package:mindease_app/src/domain/usecases/timer_mode_usecases.dart';
 
 class TimerPage extends StatefulWidget {
-
   const TimerPage({
     super.key,
     required this.timerRepository,
@@ -79,33 +79,50 @@ class _TimerViewState extends State<TimerView> {
       body: BlocBuilder<TimerCubit, TimerEntity>(
         builder: (context, state) {
           return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const HelpIconButton(
-                  title: HelpTexts.timerTitle,
-                  description: HelpTexts.timerDescription,
-                  size: AppSizes.iconSmall,
-                ),
-                const SizedBox(height: AppSizes.spacingM),
-                TimerSegmentedButton(
-                  selectedIndex: state.currentModeIndex,
-                  onChanged: (index) {
-                    context.read<TimerCubit>().setCurrentModeIndex(index);
-                  },
-                ),
-                const SizedBox(height: AppSizes.spacingL),
-                Icon(
-                  AppIcons.timer,
-                  size: AppSizes.iconLarge,
-                  color: colorScheme.primary,
-                ),
-                const SizedBox(height: AppSizes.spacingL),
-                Text(
-                  AppStrings.timer,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-              ],
+            child: Container(
+              constraints: const BoxConstraints(
+                maxWidth: 420,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Linha do HelpIconButton alinhado à direita
+                  const Row(
+                    children: [
+                      Spacer(),
+                      HelpIconButton(
+                        title: HelpTexts.timerTitle,
+                        description: HelpTexts.timerDescription,
+                        size: AppSizes.iconSmall,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSizes.spacingS),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TimerSegmentedButton(
+                        selectedIndex: state.currentModeIndex,
+                        onChanged: (index) {
+                          context.read<TimerCubit>().setCurrentModeIndex(index);
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSizes.spacingL),
+                  Icon(
+                    AppIcons.timer,
+                    size: AppSizes.iconLarge,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(height: AppSizes.spacingL),
+                  Text(
+                    AppStrings.timer,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ],
+              ),
             ),
           );
         },
