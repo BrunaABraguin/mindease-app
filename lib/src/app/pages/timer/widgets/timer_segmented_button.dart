@@ -56,7 +56,7 @@ class TimerSegmentedButton extends StatelessWidget {
         ),
         backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
           if (states.contains(WidgetState.selected)) {
-            return colorScheme.primaryContainer;
+            return colorScheme.secondaryContainer;
           }
           return colorScheme.surfaceContainerHighest;
         }),

@@ -21,7 +21,7 @@ class FocusModeButton extends StatelessWidget {
       button: true,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.secondary,
           shape: BoxShape.circle,
         ),
         child: IconButton(
