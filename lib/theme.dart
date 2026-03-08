@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  AppTheme._();
   static const Color darkBlue = Color(0xFF2F4158);
   static const Color blue = Color(0xFF3DA8AF);
   static const Color golden = Color(0xFFCDBC73);

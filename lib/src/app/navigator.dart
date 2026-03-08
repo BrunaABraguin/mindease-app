@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
-
-import 'package:mindease_app/src/app/pages/timer/timer_view.dart';
 import 'package:mindease_app/src/app/pages/habits/habits_view.dart';
-import 'package:mindease_app/src/app/pages/tasks/tasks_view.dart';
 import 'package:mindease_app/src/app/pages/missions/missions_view.dart';
+import 'package:mindease_app/src/app/pages/profile/profile_view.dart';
+import 'package:mindease_app/src/app/pages/tasks/tasks_view.dart';
+import 'package:mindease_app/src/app/pages/timer/timer_view.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
+import 'package:mindease_app/src/data/repositories/timer_repository.dart'
+    as repo;
 
 /// Main adaptive navigation shell for the app.
 ///
 /// Uses `NavigationBar` on mobile and `NavigationRail` on wider/web layouts.
 class AppNavigator extends StatefulWidget {
-  const AppNavigator({super.key, this.onToggleTheme});
+  const AppNavigator({
+    super.key,
+    this.onToggleTheme,
+    required this.timerRepository,
+  });
 
   /// Callback used by the theme toggle action.
   final VoidCallback? onToggleTheme;
+
+  /// The timer repository to use.
+  final repo.TimerRepository timerRepository;
 
   @override
   State<AppNavigator> createState() => _AppNavigatorState();
@@ -44,6 +53,11 @@ class _AppNavigatorState extends State<AppNavigator> {
       label: AppStrings.missions,
       icon: AppIcons.missionsOutlined,
       selectedIcon: AppIcons.missions,
+    ),
+    _AppDestination(
+      label: AppStrings.profile,
+      icon: AppIcons.profileOutlined,
+      selectedIcon: AppIcons.profile,
     ),
   ];
 
@@ -146,15 +160,17 @@ class _AppNavigatorState extends State<AppNavigator> {
     return _pageCache.putIfAbsent(index, () {
       switch (index) {
         case 0:
-          return const TimerPage();
+          return TimerPage(timerRepository: widget.timerRepository);
         case 1:
           return const HabitsPage();
         case 2:
           return const TasksPage();
         case 3:
           return const MissionsPage();
+        case 4:
+          return const ProfilePage();
         default:
-          return const TimerPage();
+          return TimerPage(timerRepository: widget.timerRepository);
       }
     });
   }

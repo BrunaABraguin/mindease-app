@@ -1,10 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:mindease_app/firebase_options.dart';
-import 'package:mindease_app/theme.dart';
 import 'package:mindease_app/src/app/navigator.dart';
+import 'package:mindease_app/src/data/repositories/timer_repository.dart'
+    as repo;
+import 'package:mindease_app/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,6 +56,7 @@ class AppView extends StatelessWidget {
           theme: theme,
           home: AppNavigator(
             onToggleTheme: context.read<ThemeCubit>().toggleTheme,
+            timerRepository: repo.TimerRepository(),
           ),
         );
       },
