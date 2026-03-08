@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_app/src/app/utils/app_constants.dart';
 
 class AppTheme {
   AppTheme._();
@@ -47,10 +48,13 @@ class AppTheme {
       unselectedIconTheme: IconThemeData(color: unselectedColor),
       selectedLabelTextStyle: TextStyle(
         color: selectedColor,
-        fontSize: 12,
+        fontSize: AppSizes.navFontSize,
         fontWeight: FontWeight.w500,
       ),
-      unselectedLabelTextStyle: TextStyle(color: unselectedColor, fontSize: 12),
+      unselectedLabelTextStyle: TextStyle(
+        color: unselectedColor,
+        fontSize: AppSizes.navFontSize,
+      ),
     );
   }
 

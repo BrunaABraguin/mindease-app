@@ -7,7 +7,7 @@ import 'package:mindease_app/src/domain/entities/timer_entity.dart';
 class TimerCubit extends Cubit<TimerEntity> {
   TimerCubit({
     required this.timerRepository,
-    this.tickDuration = const Duration(seconds: 1),
+    this.tickDuration = defaultTickDuration,
   }) : super(
          TimerEntity(
            durations: const TimerDurations(
@@ -23,6 +23,26 @@ class TimerCubit extends Cubit<TimerEntity> {
        ) {
     _loadTimerEntity();
   }
+  // Timer mode indices for clarity
+  static const int modeFocus = 0;
+  static const int modeShortBreak = 1;
+  static const int modeLongBreak = 2;
+
+  static const int maxCycles = 10;
+  static const Duration defaultTickDuration = Duration(seconds: 1);
+  void updateCurrentCycle(int newCurrent) {
+    if (newCurrent < 0 || newCurrent > maxCycles) return;
+    final updatedState = state.copyWith(currentCycle: newCurrent);
+    emit(updatedState);
+    timerRepository.saveTimerEntity(updatedState);
+  }
+
+  void updateTotalCycles(int newTotal) {
+    if (newTotal < 1 || newTotal > maxCycles) return;
+    emit(state.copyWith(totalCycles: newTotal));
+    timerRepository.saveTimerEntity(state.copyWith(totalCycles: newTotal));
+  }
+
   final Duration tickDuration;
   void resetTimer() {
     final int total = getTotalSeconds();
@@ -44,12 +64,23 @@ class TimerCubit extends Cubit<TimerEntity> {
     }
     final int total = getTotalSeconds();
     int remaining = state.remainingSeconds ?? total;
+    // Se estiver zerado ou nulo, define para o valor padrão
+    if (remaining == 0) {
+      remaining = total;
+      final updatedState = state.copyWith(remainingSeconds: remaining);
+      emit(updatedState);
+      await timerRepository.saveTimerEntity(updatedState);
+    }
     int tickCount = 0;
     // Marca como rodando
     emit(state.copyWith(isRunning: true));
+    bool completedNormally = true;
     while (remaining > 0 && state.isRunning == true) {
       await Future.delayed(tickDuration);
-      if (state.isRunning != true) break;
+      if (state.isRunning != true) {
+        completedNormally = false;
+        break;
+      }
       remaining--;
       tickCount++;
       final updatedState = state.copyWith(remainingSeconds: remaining);
@@ -62,8 +93,24 @@ class TimerCubit extends Cubit<TimerEntity> {
     // Marca como parado
     final stoppedState = state.copyWith(isRunning: false);
     emit(stoppedState);
-    // Salva ao terminar
     await timerRepository.saveTimerEntity(stoppedState);
+
+    // Só incrementa currentCycle se terminou normalmente
+    if (completedNormally) {
+      // Se for pausa (shortBreak ou longBreak), zera o currentCycle
+      if (state.currentModeIndex == modeShortBreak ||
+          state.currentModeIndex == modeLongBreak) {
+        final updatedState = state.copyWith(currentCycle: 0);
+        emit(updatedState);
+        await timerRepository.saveTimerEntity(updatedState);
+      } else if (state.currentCycle < state.totalCycles) {
+        // Se for sessão normal, incrementa
+        final incrementedCycle = state.currentCycle + 1;
+        final updatedState = state.copyWith(currentCycle: incrementedCycle);
+        emit(updatedState);
+        await timerRepository.saveTimerEntity(updatedState);
+      }
+    }
     // Timer terminou, pode adicionar lógica extra aqui se quiser
   }
 
@@ -97,14 +144,14 @@ class TimerCubit extends Cubit<TimerEntity> {
     TimerDurations newDurations;
     int? newRemaining;
     switch (idx) {
-      case 0:
+      case modeFocus:
         if (delta < 0 && durations.focus < Duration.secondsPerMinute) {
           return;
         }
         newDurations = durations.copyWith(focus: durations.focus + delta);
         newRemaining = (state.remainingSeconds ?? durations.focus) + delta;
         break;
-      case 1:
+      case modeShortBreak:
         if (delta < 0 && durations.shortBreak < Duration.secondsPerMinute) {
           return;
         }
@@ -113,7 +160,7 @@ class TimerCubit extends Cubit<TimerEntity> {
         );
         newRemaining = (state.remainingSeconds ?? durations.shortBreak) + delta;
         break;
-      case 2:
+      case modeLongBreak:
         if (delta < 0 && durations.longBreak < Duration.secondsPerMinute) {
           return;
         }
@@ -145,9 +192,9 @@ class TimerCubit extends Cubit<TimerEntity> {
   int getTotalSeconds({TimerEntity? timer, int? modeIndex}) {
     final t = timer ?? state;
     final idx = modeIndex ?? t.currentModeIndex;
-    if (idx == 1) {
+    if (idx == modeShortBreak) {
       return t.durations.shortBreak;
-    } else if (idx == 2) {
+    } else if (idx == modeLongBreak) {
       return t.durations.longBreak;
     }
     return t.durations.focus;

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindease_app/src/app/pages/focus_mode/focus_mode_view.dart';
 import 'package:mindease_app/src/app/pages/timer/timer_controller.dart';
+import 'package:mindease_app/src/app/pages/timer/widgets/settings_sessions.dart';
 import 'package:mindease_app/src/app/pages/timer/widgets/timer_control_buttons.dart';
 import 'package:mindease_app/src/app/pages/timer/widgets/timer_segmented_button.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
@@ -50,6 +51,7 @@ class _TimerViewState extends State<TimerView> {
 
   @override
   Widget build(BuildContext context) {
+    final gold = Theme.of(context).colorScheme.tertiary;
     return Scaffold(
       appBar: AppBar(
         leadingWidth: AppSizes.leadingWidth,
@@ -79,6 +81,7 @@ class _TimerViewState extends State<TimerView> {
       ),
       body: BlocBuilder<TimerCubit, TimerEntity>(
         builder: (context, state) {
+          final cubit = context.read<TimerCubit>();
           return Align(
             alignment: Alignment.topCenter,
             child: Container(
@@ -88,12 +91,10 @@ class _TimerViewState extends State<TimerView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                //Seleção do timer mode e display do timer
                 children: [
                   const Row(
                     children: [
                       Spacer(),
-                      // Ícone de ajuda para o timer
                       HelpIconButton(
                         title: HelpTexts.timerTitle,
                         description: HelpTexts.timerDescription,
@@ -102,73 +103,63 @@ class _TimerViewState extends State<TimerView> {
                     ],
                   ),
                   const SizedBox(height: AppSizes.spacingS),
-                  // Timer mode selection
                   TimerSegmentedButton(
                     selectedIndex: state.currentModeIndex,
                     onChanged: state.isRunning
                         ? null
                         : (index) {
-                            context.read<TimerCubit>().updateCurrentModeIndex(
-                              index,
-                            );
+                            cubit.updateCurrentModeIndex(index);
                           },
                     disabled: state.isRunning,
                   ),
                   const SizedBox(height: AppSizes.spacingL),
                   VerticalTimerProgress(
-                    totalSeconds: context.read<TimerCubit>().getTotalSeconds(
-                      timer: state,
-                    ),
+                    totalSeconds: cubit.getTotalSeconds(timer: state),
                     remainingSeconds:
                         state.remainingSeconds ??
-                        context.read<TimerCubit>().getTotalSeconds(
-                          timer: state,
-                        ),
+                        cubit.getTotalSeconds(timer: state),
                   ),
-                  const SizedBox(height: AppSizes.spacingM),
                   Expanded(
-                    child: Center(
-                      child: TimerDisplay(
-                        timer: state,
-                        isRunning: state.isRunning,
-                        onIncrement: () {
-                          final cubit = context.read<TimerCubit>();
-                          cubit.incrementSessionDuration();
-                        },
-                        onDecrement: () {
-                          final cubit = context.read<TimerCubit>();
-                          cubit.decrementSessionDuration();
-                        },
-                        onSetValue: (value) {
-                          final cubit = context.read<TimerCubit>();
-                          cubit.setTimerFromInput(value);
-                        },
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TimerDisplay(
+                          timer: state,
+                          isRunning: state.isRunning,
+                          onIncrement: () => cubit.incrementSessionDuration(),
+                          onDecrement: () => cubit.decrementSessionDuration(),
+                          onSetValue: (value) => cubit.setTimerFromInput(value),
+                        ),
+                        // Controle de ciclos logo abaixo
+                        const SizedBox(height: 24),
+                        SettingsSessions(
+                          currentCycle: state.currentCycle,
+                          totalCycles: state.totalCycles,
+                          isRunning: state.isRunning,
+                          onIncrement: () =>
+                              cubit.updateTotalCycles(state.totalCycles + 1),
+                          onDecrement: () =>
+                              cubit.updateTotalCycles(state.totalCycles - 1),
+                          iconColor: gold,
+                          showCompletedMessage:
+                              state.currentCycle == state.totalCycles,
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: AppSizes.spacingXxl),
-
                   Padding(
                     padding: const EdgeInsets.only(
                       bottom: AppSizes.timerControlButtonsBottomPadding,
                     ),
                     child: Center(
-                      child: BlocBuilder<TimerCubit, TimerEntity>(
-                        buildWhen: (previous, current) =>
-                            previous.remainingSeconds !=
-                            current.remainingSeconds,
-                        builder: (context, _) {
-                          final cubit = context.read<TimerCubit>();
-                          return TimerControlButtons(
-                            onStartPause: () {
-                              cubit.startPauseTimer();
-                            },
-                            onReset: () {
-                              cubit.resetTimer();
-                            },
-                            isRunning: state.isRunning,
-                          );
+                      child: TimerControlButtons(
+                        onStartPause: () {
+                          cubit.startPauseTimer();
                         },
+                        onReset: () {
+                          cubit.resetTimer();
+                        },
+                        isRunning: state.isRunning,
                       ),
                     ),
                   ),
