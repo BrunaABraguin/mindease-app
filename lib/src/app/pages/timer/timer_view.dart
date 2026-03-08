@@ -49,9 +49,21 @@ class TimerView extends StatefulWidget {
 }
 
 class _TimerViewState extends State<TimerView> {
+  static const double _mobileMaxWidthFraction = 0.95;
+  static const double _webMaxWidthFraction = 0.5;
+
+  double _getResponsiveMaxWidth(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    const webBreakpoint = 600.0;
+    if (width < webBreakpoint) {
+      return width * _mobileMaxWidthFraction;
+    } else {
+      return width * _webMaxWidthFraction;
+    }
+  }
+
   @override
   void dispose() {
-    // Garante que ao sair da tela timer, o modo de UI volta ao normal
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }
@@ -79,12 +91,13 @@ class _TimerViewState extends State<TimerView> {
         builder: (context, state) {
           return Center(
             child: Container(
-              constraints: const BoxConstraints(maxWidth: 420),
+              constraints: BoxConstraints(
+                maxWidth: _getResponsiveMaxWidth(context),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Linha do HelpIconButton alinhado à direita
                   const Row(
                     children: [
                       Spacer(),

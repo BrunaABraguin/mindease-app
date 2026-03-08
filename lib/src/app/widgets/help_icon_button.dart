@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_app/src/app/utils/app_constants.dart';
 
 class HelpIconButton extends StatelessWidget {
   const HelpIconButton({
     super.key,
     required this.title,
     required this.description,
-    this.size = 16,
+    this.size = AppSizes.iconExtraSmall,
   });
 
   final String title;
