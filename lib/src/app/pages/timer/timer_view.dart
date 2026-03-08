@@ -58,7 +58,6 @@ class _TimerViewState extends State<TimerView> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -80,9 +79,7 @@ class _TimerViewState extends State<TimerView> {
         builder: (context, state) {
           return Center(
             child: Container(
-              constraints: const BoxConstraints(
-                maxWidth: 420,
-              ),
+              constraints: const BoxConstraints(maxWidth: 420),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -109,17 +106,6 @@ class _TimerViewState extends State<TimerView> {
                         },
                       ),
                     ],
-                  ),
-                  const SizedBox(height: AppSizes.spacingL),
-                  Icon(
-                    AppIcons.timer,
-                    size: AppSizes.iconLarge,
-                    color: colorScheme.primary,
-                  ),
-                  const SizedBox(height: AppSizes.spacingL),
-                  Text(
-                    AppStrings.timer,
-                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ],
               ),
