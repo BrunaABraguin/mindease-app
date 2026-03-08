@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mindease_app/src/app/utils/timer_input_parser.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
 import 'package:mindease_app/src/domain/entities/timer_entity.dart';
@@ -64,6 +65,22 @@ class TimerCubit extends Cubit<TimerEntity> {
     // Salva ao terminar
     await timerRepository.saveTimerEntity(stoppedState);
     // Timer terminou, pode adicionar lógica extra aqui se quiser
+  }
+
+  void setTimerFromInput(String value) {
+    final total = parseTimerInput(value);
+    if (total != null) {
+      setTimerSeconds(total);
+    }
+  }
+
+  void setTimerSeconds(int seconds) {
+    final updatedState = state.copyWith(
+      remainingSeconds: seconds,
+      isRunning: false,
+    );
+    emit(updatedState);
+    timerRepository.saveTimerEntity(updatedState);
   }
 
   void decrementSessionDuration() {

@@ -116,10 +116,14 @@ class _TimerViewState extends State<TimerView> {
                   ),
                   const SizedBox(height: AppSizes.spacingL),
                   VerticalTimerProgress(
-                    totalSeconds: context.read<TimerCubit>().getTotalSeconds(timer: state),
+                    totalSeconds: context.read<TimerCubit>().getTotalSeconds(
+                      timer: state,
+                    ),
                     remainingSeconds:
                         state.remainingSeconds ??
-                        context.read<TimerCubit>().getTotalSeconds(timer: state),
+                        context.read<TimerCubit>().getTotalSeconds(
+                          timer: state,
+                        ),
                   ),
                   const SizedBox(height: AppSizes.spacingM),
                   Expanded(
@@ -134,6 +138,10 @@ class _TimerViewState extends State<TimerView> {
                         onDecrement: () {
                           final cubit = context.read<TimerCubit>();
                           cubit.decrementSessionDuration();
+                        },
+                        onSetValue: (value) {
+                          final cubit = context.read<TimerCubit>();
+                          cubit.setTimerFromInput(value);
                         },
                       ),
                     ),

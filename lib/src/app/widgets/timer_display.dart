@@ -9,11 +9,13 @@ class TimerDisplay extends StatefulWidget {
     required this.onIncrement,
     required this.onDecrement,
     required this.isRunning,
+    required this.onSetValue,
   });
   final TimerEntity timer;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
   final bool isRunning;
+  final void Function(String value) onSetValue;
 
   @override
   State<TimerDisplay> createState() => _TimerDisplayState();
@@ -21,6 +23,9 @@ class TimerDisplay extends StatefulWidget {
 
 class _TimerDisplayState extends State<TimerDisplay>
     with SingleTickerProviderStateMixin {
+  bool _editing = false;
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   late final AnimationController _blinkController;
 
   @override
@@ -31,6 +36,13 @@ class _TimerDisplayState extends State<TimerDisplay>
       duration: const Duration(milliseconds: 600),
     );
     _updateBlinking();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus && _editing) {
+      _saveInput();
+    }
   }
 
   @override
@@ -58,6 +70,8 @@ class _TimerDisplayState extends State<TimerDisplay>
   @override
   void dispose() {
     _blinkController.dispose();
+    _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -70,11 +84,57 @@ class _TimerDisplayState extends State<TimerDisplay>
     return '$minutes:$secs';
   }
 
+  TextStyle _timerTextStyle(BuildContext context) {
+    final theme = Theme.of(context);
+    return theme.textTheme.displayLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: theme.colorScheme.inverseSurface,
+          fontSize: AppSizes.timerFontSize,
+        ) ??
+        TextStyle(
+          fontWeight: FontWeight.bold,
+          color: theme.colorScheme.inverseSurface,
+          fontSize: AppSizes.timerFontSize,
+        );
+  }
+
+  void _startEditing() {
+    setState(() {
+      _editing = true;
+      final secs = widget.timer.remainingSeconds ?? 0;
+      final min = (secs ~/ 60).toString().padLeft(2, '0');
+      final sec = (secs % 60).toString().padLeft(2, '0');
+      _controller.text = "$min:$sec";
+      _focusNode.requestFocus();
+      _controller.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _controller.text.length,
+      );
+    });
+  }
+
+  void _saveInput() {
+    final text = _controller.text.trim();
+    widget.onSetValue(text);
+    setState(() {
+      _editing = false;
+    });
+  }
+
+  // Timer boundaries as static constants
+  static const int timerMinSeconds = 0;
+  static const int timerMaxMinutes = 60; // Maximum of 60 minutes
+  static const int timerMaxSeconds =
+      timerMaxMinutes * Duration.secondsPerMinute;
+
   @override
   Widget build(BuildContext context) {
     final isZero =
         widget.timer.remainingSeconds == null ||
-        widget.timer.remainingSeconds! <= 0;
+        widget.timer.remainingSeconds! <= timerMinSeconds;
+    final isMax =
+        widget.timer.remainingSeconds != null &&
+        widget.timer.remainingSeconds! >= timerMaxSeconds;
     return Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -83,8 +143,8 @@ class _TimerDisplayState extends State<TimerDisplay>
             label: 'Diminuir tempo',
             button: true,
             child: IconButton(
-              icon: const Icon(Icons.remove),
-              onPressed: widget.isRunning ? null : widget.onDecrement,
+              icon: const Icon(Icons.remove_circle, size: AppSizes.iconMedium),
+              onPressed: widget.isRunning || isZero ? null : widget.onDecrement,
               tooltip: 'Diminuir tempo',
             ),
           ),
@@ -99,19 +159,32 @@ class _TimerDisplayState extends State<TimerDisplay>
                             ? AppConstants.blinkMinOpacity
                             : 1.0)
                       : 1.0,
-                  child: Text(
-                    _formatDuration(widget.timer.remainingSeconds),
-                    style:
-                        Theme.of(context).textTheme.displayLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.inverseSurface,
-                          fontSize: AppSizes.timerFontSize,
-                        ) ??
-                        TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.inverseSurface,
-                          fontSize: AppSizes.timerFontSize,
-                        ),
+                  child: GestureDetector(
+                    onDoubleTap: widget.isRunning ? null : _startEditing,
+                    child: _editing
+                        ? SizedBox(
+                            width: AppSizes.buttonMinWidthMedium,
+                            child: TextField(
+                              controller: _controller,
+                              focusNode: _focusNode,
+                              onSubmitted: (_) => _saveInput(),
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(
+                                  vertical: AppSizes.spacingXs,
+                                  horizontal: AppSizes.spacingXs,
+                                ),
+                              ),
+                              style: _timerTextStyle(context),
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        : Text(
+                            _formatDuration(widget.timer.remainingSeconds),
+                            style: _timerTextStyle(context),
+                          ),
                   ),
                 );
               },
@@ -122,8 +195,8 @@ class _TimerDisplayState extends State<TimerDisplay>
             label: 'Aumentar tempo',
             button: true,
             child: IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: widget.isRunning ? null : widget.onIncrement,
+              icon: const Icon(Icons.add_circle, size: AppSizes.iconMedium),
+              onPressed: widget.isRunning || isMax ? null : widget.onIncrement,
               tooltip: 'Aumentar tempo',
             ),
           ),
