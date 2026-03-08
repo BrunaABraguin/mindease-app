@@ -7,7 +7,7 @@ class TimerCubit extends Cubit<TimerEntity> {
   TimerCubit({required this.timerRepository})
     : super(
         TimerEntity(
-          durations: TimerDurations(
+          durations: const TimerDurations(
             focus: 25 * 60,
             shortBreak: 5 * 60,
             longBreak: 15 * 60,
