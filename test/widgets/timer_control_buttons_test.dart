@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mindease_app/src/app/pages/timer/widgets/timer_control_buttons.dart';
 
 void main() {
@@ -13,7 +13,6 @@ void main() {
         home: TimerControlButtons(
           onStartPause: () => started = true,
           onReset: () => reset = true,
-          isRunning: false,
         ),
       ),
     );

@@ -53,9 +53,7 @@ class TimerSegmentedButton extends StatelessWidget {
                   ),
                   selected: <int>{selectedIndex},
                   onSelectionChanged: (newSelection) {
-                    if (onChanged != null) {
-                      onChanged!(newSelection.first);
-                    }
+                    onChanged?.call(newSelection.first);
                   },
                   style: ButtonStyle(
                     padding: WidgetStateProperty.all(
@@ -113,7 +111,7 @@ class TimerSegmentedButton extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSizes.spacingXs),
                 Text(
-                  'Pressione Parar ou Reiniciar para alterar modo',
+                  'Pressione Reiniciar ou Parar para alterar modo',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant
                         .withValues(alpha: AppSizes.opacityMedium),

@@ -4,41 +4,36 @@ import 'package:mindease_app/src/data/repositories/timer_repository.dart'
 import 'package:mindease_app/src/domain/entities/timer_entity.dart';
 
 class TimerCubit extends Cubit<TimerEntity> {
-  int getTotalSeconds([TimerEntity? timer]) {
+  TimerCubit({
+    required this.timerRepository,
+    this.tickDuration = const Duration(seconds: 1),
+  }) : super(
+         TimerEntity(
+           durations: const TimerDurations(
+             focus: 25 * 60,
+             shortBreak: 5 * 60,
+             longBreak: 15 * 60,
+           ),
+           currentCycle: 1,
+           totalCycles: 4,
+           completedSessions: 0,
+           currentModeIndex: 0,
+         ),
+       ) {
+    _loadTimerEntity();
+  }
+  int getTotalSeconds({TimerEntity? timer, int? modeIndex}) {
     final t = timer ?? state;
-    if (t.currentModeIndex == 1) {
+    final idx = modeIndex ?? t.currentModeIndex;
+    if (idx == 1) {
       return t.durations.shortBreak;
-    } else if (t.currentModeIndex == 2) {
+    } else if (idx == 2) {
       return t.durations.longBreak;
     }
     return t.durations.focus;
   }
 
-  TimerCubit({required this.timerRepository})
-    : super(
-        TimerEntity(
-          durations: const TimerDurations(
-            focus: 25 * 60,
-            shortBreak: 5 * 60,
-            longBreak: 15 * 60,
-          ),
-          currentCycle: 1,
-          totalCycles: 4,
-          completedSessions: 0,
-          currentModeIndex: 0,
-        ),
-      ) {
-    _loadTimerEntity();
-  }
-  int _getTotalSecondsForMode([int? modeIndex]) {
-    final idx = modeIndex ?? state.currentModeIndex;
-    if (idx == 1) {
-      return state.durations.shortBreak;
-    } else if (idx == 2) {
-      return state.durations.longBreak;
-    }
-    return state.durations.focus;
-  }
+  final Duration tickDuration;
 
   Future<void> startPauseTimer() async {
     if (state.isRunning == true) {
@@ -48,13 +43,13 @@ class TimerCubit extends Cubit<TimerEntity> {
       await timerRepository.saveTimerEntity(updatedState);
       return;
     }
-    final int total = _getTotalSecondsForMode();
+    final int total = getTotalSeconds();
     int remaining = state.remainingSeconds ?? total;
     int tickCount = 0;
     // Marca como rodando
     emit(state.copyWith(isRunning: true));
     while (remaining > 0 && state.isRunning == true) {
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(tickDuration);
       if (state.isRunning != true) break;
       remaining--;
       tickCount++;
@@ -74,7 +69,7 @@ class TimerCubit extends Cubit<TimerEntity> {
   }
 
   void resetTimer() {
-    final int total = _getTotalSecondsForMode();
+    final int total = getTotalSeconds();
     final updatedState = state.copyWith(
       remainingSeconds: total,
       isRunning: false,
@@ -93,7 +88,7 @@ class TimerCubit extends Cubit<TimerEntity> {
   }
 
   Future<void> updateCurrentModeIndex(int index) async {
-    final int total = _getTotalSecondsForMode(index);
+    final int total = getTotalSeconds(modeIndex: index);
     final updatedState = state.copyWith(
       currentModeIndex: index,
       remainingSeconds: total,

@@ -21,7 +21,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
           body: VerticalTimerProgress(totalSeconds: 0, remainingSeconds: 0),
         ),

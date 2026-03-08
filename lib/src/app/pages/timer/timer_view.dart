@@ -116,12 +116,10 @@ class _TimerViewState extends State<TimerView> {
                   ),
                   const SizedBox(height: AppSizes.spacingL),
                   VerticalTimerProgress(
-                    totalSeconds: context.read<TimerCubit>().getTotalSeconds(
-                      state,
-                    ),
+                    totalSeconds: context.read<TimerCubit>().getTotalSeconds(timer: state),
                     remainingSeconds:
                         state.remainingSeconds ??
-                        context.read<TimerCubit>().getTotalSeconds(state),
+                        context.read<TimerCubit>().getTotalSeconds(timer: state),
                   ),
                   const SizedBox(height: AppSizes.spacingM),
                   Expanded(

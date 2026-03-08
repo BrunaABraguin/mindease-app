@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,8 +18,8 @@ Future<void> main() async {
     );
     Bloc.observer = const AppBlocObserver();
     runApp(const Mindease());
-  } catch (error, stack) {
-    debugPrint('[Bootstrap error] $error\n$stack');
+  } on Object catch (error, stack) {
+    developer.log('[Bootstrap error] $error\n$stack', name: 'Bootstrap');
     runApp(
       MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -44,7 +45,9 @@ class AppBlocObserver extends BlocObserver {
   @override
   void onChange(BlocBase<dynamic> bloc, Change<dynamic> change) {
     super.onChange(bloc, change);
-    if (bloc is Cubit) print(change);
+    if (bloc is Cubit) {
+      developer.log(change.toString(), name: 'BlocChange');
+    }
   }
 
   @override
@@ -53,7 +56,7 @@ class AppBlocObserver extends BlocObserver {
     Transition<dynamic, dynamic> transition,
   ) {
     super.onTransition(bloc, transition);
-    print(transition);
+    developer.log(transition.toString(), name: 'BlocTransition');
   }
 }
 
@@ -94,7 +97,6 @@ class ThemeCubit extends Cubit<ThemeData> {
   ThemeCubit() : super(_lightTheme);
 
   static final _lightTheme = AppTheme.lightTheme;
-
   static final _darkTheme = AppTheme.darkTheme;
 
   /// Toggles the current brightness between light and dark.

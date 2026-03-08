@@ -71,7 +71,11 @@ class _TimerDisplayState extends State<TimerDisplay>
         animation: _blinkController,
         builder: (context, child) {
           return Opacity(
-            opacity: isZero ? (_blinkController.value < 0.5 ? 0.2 : 1.0) : 1.0,
+            opacity: isZero
+                ? (_blinkController.value < AppConstants.blinkThreshold
+                    ? AppConstants.blinkMinOpacity
+                    : 1.0)
+                : 1.0,
             child: Text(
               _formatDuration(widget.timer.remainingSeconds),
               style:
