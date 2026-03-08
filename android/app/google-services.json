@@ -29,6 +29,13 @@
             {
               "client_id": "929281522726-ffnplmh8v63agp1ajsd0vr068mdivqjt.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "929281522726-dg354pdutoonb460a4vrr1vdfrllnov5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mindeaseApp"
+              }
             }
           ]
         }
