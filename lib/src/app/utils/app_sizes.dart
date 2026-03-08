@@ -6,7 +6,6 @@ class AppSizes {
   static const double paddingLeftFocusMode = 8.0;
   static const double timerControlButtonsBottomPadding = 56.0;
 
-  static const double timerFontSize = 80.0;
   // Button heights and widths
   static const double buttonHeightSmall = 32.0;
   static const double buttonHeightMedium = 40.0;
@@ -63,4 +62,9 @@ class AppSizes {
   static const double opacityLight = 0.75;
   static const double opacityMedium = 0.5;
   static const double opacityHeavy = 0.25;
+
+  // Font sizes
+  static const double cycleFontSize = 20.0;
+  static const double timerFontSize = 80.0;
+  static const double navFontSize = 14.0;
 }

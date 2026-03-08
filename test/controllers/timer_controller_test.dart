@@ -17,12 +17,6 @@ class MockTimerRepository implements repo.TimerRepository {
   Future<TimerEntity?> loadTimerEntity() async {
     return entityToLoad;
   }
-
-  @override
-  Future<void> clearTimerEntity() async {
-    savedEntities.clear();
-    entityToLoad = null;
-  }
 }
 
 void main() {
@@ -31,10 +25,9 @@ void main() {
 
   setUp(() {
     mockRepo = MockTimerRepository();
-    mockRepo.entityToLoad = null; // Estado inicial: nada salvo
+    mockRepo.entityToLoad = null;
 
     cubit = TimerCubit(timerRepository: mockRepo);
-    // Não sobrescreva o estado inicial do cubit aqui!
   });
 
   test('initial state is correct', () {
@@ -81,7 +74,7 @@ void main() {
     // Pause timer
     await cubit.startPauseTimer();
     expect(cubit.state.isRunning, false);
-    expect(mockRepo.savedEntities.isNotEmpty, true);
+    await Future.delayed(const Duration(milliseconds: 100));
     expect(mockRepo.savedEntities.last, isA<TimerEntity>());
     await future;
   });
