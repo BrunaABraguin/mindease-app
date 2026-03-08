@@ -7,16 +7,22 @@ import 'package:mindease_app/src/app/pages/timer/timer_view.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
-import 'package:mindease_app/src/domain/usecases/timer_mode_usecases.dart';
 
 /// Main adaptive navigation shell for the app.
 ///
 /// Uses `NavigationBar` on mobile and `NavigationRail` on wider/web layouts.
 class AppNavigator extends StatefulWidget {
-  const AppNavigator({super.key, this.onToggleTheme});
+  const AppNavigator({
+    super.key,
+    this.onToggleTheme,
+    required this.timerRepository,
+  });
 
   /// Callback used by the theme toggle action.
   final VoidCallback? onToggleTheme;
+
+  /// The timer repository to use.
+  final repo.TimerRepository timerRepository;
 
   @override
   State<AppNavigator> createState() => _AppNavigatorState();
@@ -152,21 +158,9 @@ class _AppNavigatorState extends State<AppNavigator> {
 
   Widget _buildPage(int index) {
     return _pageCache.putIfAbsent(index, () {
-      // Timer dependencies
-      final timerRepository = repo.TimerRepository();
-      final getCurrentModeIndexUseCase = GetCurrentModeIndexUseCase(
-        timerRepository,
-      );
-      final setCurrentModeIndexUseCase = SetCurrentModeIndexUseCase(
-        timerRepository,
-      );
       switch (index) {
         case 0:
-          return TimerPage(
-            timerRepository: timerRepository,
-            getCurrentModeIndexUseCase: getCurrentModeIndexUseCase,
-            setCurrentModeIndexUseCase: setCurrentModeIndexUseCase,
-          );
+          return TimerPage(timerRepository: widget.timerRepository);
         case 1:
           return const HabitsPage();
         case 2:
@@ -176,11 +170,7 @@ class _AppNavigatorState extends State<AppNavigator> {
         case 4:
           return const ProfilePage();
         default:
-          return TimerPage(
-            timerRepository: timerRepository,
-            getCurrentModeIndexUseCase: getCurrentModeIndexUseCase,
-            setCurrentModeIndexUseCase: setCurrentModeIndexUseCase,
-          );
+          return TimerPage(timerRepository: widget.timerRepository);
       }
     });
   }

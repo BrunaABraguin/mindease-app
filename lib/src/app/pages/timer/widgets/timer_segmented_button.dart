@@ -31,7 +31,10 @@ class TimerSegmentedButton extends StatelessWidget {
         (index) => ButtonSegment(
           value: index,
           label: Text(_timerOptions[index]),
-          icon: Icon(_timerIcons[index], color: colorScheme.primary),
+          icon: Icon(
+            _timerIcons[index],
+            color: Theme.of(context).iconTheme.color,
+          ),
         ),
       ),
       selected: <int>{selectedIndex},

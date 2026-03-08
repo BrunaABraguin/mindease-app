@@ -1,4 +1,6 @@
+import 'package:mindease_app/src/domain/entities/timer_entity.dart';
+
 abstract class TimerRepositoryBase {
-  Future<int?> getCurrentModeIndex();
-  Future<void> setCurrentModeIndex(int index);
+  Future<void> saveTimerEntity(TimerEntity timer);
+  Future<TimerEntity?> loadTimerEntity();
 }

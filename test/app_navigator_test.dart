@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindease_app/src/app/navigator.dart';
+import 'package:mindease_app/src/data/repositories/timer_repository.dart'
+    as repo;
 import 'package:mindease_app/theme.dart';
 
 void main() {
@@ -15,7 +17,10 @@ void main() {
     });
 
     await tester.pumpWidget(
-      MaterialApp(theme: AppTheme.lightTheme, home: const AppNavigator()),
+      MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: AppNavigator(timerRepository: repo.TimerRepository()),
+      ),
     );
     await tester.pumpAndSettle();
   }

@@ -8,21 +8,14 @@ import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/app/utils/help_texts.dart';
 import 'package:mindease_app/src/app/widgets/focus_mode_button.dart';
 import 'package:mindease_app/src/app/widgets/help_icon_button.dart';
+import 'package:mindease_app/src/app/widgets/timer_display.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
 import 'package:mindease_app/src/domain/entities/timer_entity.dart';
-import 'package:mindease_app/src/domain/usecases/timer_mode_usecases.dart';
 
 class TimerPage extends StatefulWidget {
-  const TimerPage({
-    super.key,
-    required this.timerRepository,
-    required this.getCurrentModeIndexUseCase,
-    required this.setCurrentModeIndexUseCase,
-  });
+  const TimerPage({super.key, required this.timerRepository});
   final repo.TimerRepository timerRepository;
-  final GetCurrentModeIndexUseCase getCurrentModeIndexUseCase;
-  final SetCurrentModeIndexUseCase setCurrentModeIndexUseCase;
 
   @override
   State<TimerPage> createState() => _TimerPageState();
@@ -32,10 +25,7 @@ class _TimerPageState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => TimerCubit(
-        getCurrentModeIndexUseCase: widget.getCurrentModeIndexUseCase,
-        setCurrentModeIndexUseCase: widget.setCurrentModeIndexUseCase,
-      ),
+      create: (_) => TimerCubit(timerRepository: widget.timerRepository),
       child: const TimerView(),
     );
   }
@@ -73,11 +63,13 @@ class _TimerViewState extends State<TimerView> {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          // Ícone de ajuda para o Focus Mode
           const HelpIconButton(
             title: HelpTexts.focusModeTitle,
             description: HelpTexts.focusModeDescription,
             size: AppSizes.iconSmall,
           ),
+          // Botão para acessar o Focus Mode
           FocusModeButton(
             onPressed: () {
               Navigator.of(
@@ -97,10 +89,12 @@ class _TimerViewState extends State<TimerView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                //Seleção do timer mode e display do timer
                 children: [
                   const Row(
                     children: [
                       Spacer(),
+                      // Ícone de ajuda para o timer
                       HelpIconButton(
                         title: HelpTexts.timerTitle,
                         description: HelpTexts.timerDescription,
@@ -109,12 +103,16 @@ class _TimerViewState extends State<TimerView> {
                     ],
                   ),
                   const SizedBox(height: AppSizes.spacingS),
+                  // Timer mode selection
                   TimerSegmentedButton(
                     selectedIndex: state.currentModeIndex,
                     onChanged: (index) {
-                      context.read<TimerCubit>().setCurrentModeIndex(index);
+                      context.read<TimerCubit>().updateCurrentModeIndex(index);
                     },
                   ),
+                  const SizedBox(height: AppSizes.spacingL),
+                  // Timer centralizado
+                  TimerDisplay(timer: state),
                 ],
               ),
             ),

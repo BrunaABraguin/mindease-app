@@ -27,7 +27,7 @@ class FocusModeButton extends StatelessWidget {
         child: IconButton(
           icon: Icon(
             exit ? Icons.fullscreen_exit : Icons.fullscreen,
-            color: Colors.white,
+            color: Theme.of(context).primaryIconTheme.color,
             size: size,
           ),
           tooltip: label,

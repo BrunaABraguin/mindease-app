@@ -1,37 +1,35 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mindease_app/src/data/repositories/timer_repository.dart'
+    as repo;
 import 'package:mindease_app/src/domain/entities/timer_entity.dart';
-import 'package:mindease_app/src/domain/usecases/timer_mode_usecases.dart';
 
 class TimerCubit extends Cubit<TimerEntity> {
-
-  TimerCubit({
-    required this.getCurrentModeIndexUseCase,
-    required this.setCurrentModeIndexUseCase,
-  }) : super(
-         TimerEntity(
-           focusTime: 25 * 60,
-           breakTime: 5 * 60,
-           longBreakTime: 15 * 60,
-           currentCycle: 1,
-           totalCycles: 4,
-           completedSessions: 0,
-           currentModeIndex: 0,
-         ),
-       ) {
-    _loadCurrentModeIndex();
+  TimerCubit({required this.timerRepository})
+    : super(
+        TimerEntity(
+          focusTime: 25 * 60,
+          breakTime: 5 * 60,
+          longBreakTime: 15 * 60,
+          currentCycle: 1,
+          totalCycles: 4,
+          completedSessions: 0,
+          currentModeIndex: 0,
+        ),
+      ) {
+    _loadTimerEntity();
   }
-  final GetCurrentModeIndexUseCase getCurrentModeIndexUseCase;
-  final SetCurrentModeIndexUseCase setCurrentModeIndexUseCase;
+  final repo.TimerRepository timerRepository;
 
-  Future<void> _loadCurrentModeIndex() async {
-    final index = await getCurrentModeIndexUseCase();
-    if (index != null) {
-      emit(state.copyWith(currentModeIndex: index));
+  Future<void> _loadTimerEntity() async {
+    final loaded = await timerRepository.loadTimerEntity();
+    if (loaded != null) {
+      emit(loaded);
     }
   }
 
-  Future<void> setCurrentModeIndex(int index) async {
-    emit(state.copyWith(currentModeIndex: index));
-    await setCurrentModeIndexUseCase(index);
+  Future<void> updateCurrentModeIndex(int index) async {
+    final updatedState = state.copyWith(currentModeIndex: index);
+    emit(updatedState);
+    await timerRepository.saveTimerEntity(updatedState);
   }
 }

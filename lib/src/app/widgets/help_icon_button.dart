@@ -18,7 +18,7 @@ class HelpIconButton extends StatelessWidget {
     return IconButton(
       icon: Icon(
         Icons.help_outline,
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).iconTheme.color,
         size: size,
       ),
       tooltip: 'Ajuda',
