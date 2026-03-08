@@ -5,12 +5,6 @@ import 'package:mindease_app/src/domain/repositories/timer_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TimerRepository implements TimerRepositoryBase {
-  @override
-  Future<void> clearTimerEntity() async {
-    final prefs = await _prefsFuture;
-    await prefs.remove(_prefsTimerKey);
-  }
-
   static const _prefsTimerKey = 'timer_entity';
   final Future<SharedPreferences> _prefsFuture =
       SharedPreferences.getInstance();

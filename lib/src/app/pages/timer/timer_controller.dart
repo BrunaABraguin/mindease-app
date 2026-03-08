@@ -10,9 +10,9 @@ class TimerCubit extends Cubit<TimerEntity> {
   }) : super(
          TimerEntity(
            durations: const TimerDurations(
-             focus: 25 * 60,
-             shortBreak: 5 * 60,
-             longBreak: 15 * 60,
+             focus: 25 * Duration.secondsPerMinute,
+             shortBreak: 5 * Duration.secondsPerMinute,
+             longBreak: 15 * Duration.secondsPerMinute,
            ),
            currentCycle: 1,
            totalCycles: 4,
@@ -22,18 +22,16 @@ class TimerCubit extends Cubit<TimerEntity> {
        ) {
     _loadTimerEntity();
   }
-  int getTotalSeconds({TimerEntity? timer, int? modeIndex}) {
-    final t = timer ?? state;
-    final idx = modeIndex ?? t.currentModeIndex;
-    if (idx == 1) {
-      return t.durations.shortBreak;
-    } else if (idx == 2) {
-      return t.durations.longBreak;
-    }
-    return t.durations.focus;
-  }
-
   final Duration tickDuration;
+  void resetTimer() {
+    final int total = getTotalSeconds();
+    final updatedState = state.copyWith(
+      remainingSeconds: total,
+      isRunning: false,
+    );
+    emit(updatedState);
+    timerRepository.saveTimerEntity(updatedState);
+  }
 
   Future<void> startPauseTimer() async {
     if (state.isRunning == true) {
@@ -68,23 +66,74 @@ class TimerCubit extends Cubit<TimerEntity> {
     // Timer terminou, pode adicionar lógica extra aqui se quiser
   }
 
-  void resetTimer() {
-    final int total = getTotalSeconds();
+  void decrementSessionDuration() {
+    _changeSessionDuration(-Duration.secondsPerMinute);
+  }
+
+  void incrementSessionDuration() {
+    _changeSessionDuration(Duration.secondsPerMinute);
+  }
+
+  void _changeSessionDuration(int delta) {
+    final idx = state.currentModeIndex;
+    final durations = state.durations;
+    TimerDurations newDurations;
+    int? newRemaining;
+    switch (idx) {
+      case 0:
+        if (delta < 0 && durations.focus < Duration.secondsPerMinute) {
+          return;
+        }
+        newDurations = durations.copyWith(focus: durations.focus + delta);
+        newRemaining = (state.remainingSeconds ?? durations.focus) + delta;
+        break;
+      case 1:
+        if (delta < 0 && durations.shortBreak < Duration.secondsPerMinute) {
+          return;
+        }
+        newDurations = durations.copyWith(
+          shortBreak: durations.shortBreak + delta,
+        );
+        newRemaining = (state.remainingSeconds ?? durations.shortBreak) + delta;
+        break;
+      case 2:
+        if (delta < 0 && durations.longBreak < Duration.secondsPerMinute) {
+          return;
+        }
+        newDurations = durations.copyWith(
+          longBreak: durations.longBreak + delta,
+        );
+        newRemaining = (state.remainingSeconds ?? durations.longBreak) + delta;
+        break;
+      default:
+        return;
+    }
+    if (delta < 0 && newRemaining < 0) newRemaining = 0;
     final updatedState = state.copyWith(
-      remainingSeconds: total,
-      isRunning: false,
+      durations: newDurations,
+      remainingSeconds: newRemaining,
     );
     emit(updatedState);
     timerRepository.saveTimerEntity(updatedState);
   }
-
-  final repo.TimerRepository timerRepository;
 
   Future<void> _loadTimerEntity() async {
     final loaded = await timerRepository.loadTimerEntity();
     if (loaded != null) {
       emit(loaded);
     }
+  }
+
+  final repo.TimerRepository timerRepository;
+  int getTotalSeconds({TimerEntity? timer, int? modeIndex}) {
+    final t = timer ?? state;
+    final idx = modeIndex ?? t.currentModeIndex;
+    if (idx == 1) {
+      return t.durations.shortBreak;
+    } else if (idx == 2) {
+      return t.durations.longBreak;
+    }
+    return t.durations.focus;
   }
 
   Future<void> updateCurrentModeIndex(int index) async {

@@ -123,7 +123,20 @@ class _TimerViewState extends State<TimerView> {
                   ),
                   const SizedBox(height: AppSizes.spacingM),
                   Expanded(
-                    child: Center(child: TimerDisplay(timer: state)),
+                    child: Center(
+                      child: TimerDisplay(
+                        timer: state,
+                        isRunning: state.isRunning,
+                        onIncrement: () {
+                          final cubit = context.read<TimerCubit>();
+                          cubit.incrementSessionDuration();
+                        },
+                        onDecrement: () {
+                          final cubit = context.read<TimerCubit>();
+                          cubit.decrementSessionDuration();
+                        },
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSizes.spacingXxl),
 

@@ -3,8 +3,17 @@ import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/domain/entities/timer_entity.dart';
 
 class TimerDisplay extends StatefulWidget {
-  const TimerDisplay({super.key, required this.timer});
+  const TimerDisplay({
+    super.key,
+    required this.timer,
+    required this.onIncrement,
+    required this.onDecrement,
+    required this.isRunning,
+  });
   final TimerEntity timer;
+  final VoidCallback onIncrement;
+  final VoidCallback onDecrement;
+  final bool isRunning;
 
   @override
   State<TimerDisplay> createState() => _TimerDisplayState();
@@ -67,31 +76,58 @@ class _TimerDisplayState extends State<TimerDisplay>
         widget.timer.remainingSeconds == null ||
         widget.timer.remainingSeconds! <= 0;
     return Center(
-      child: AnimatedBuilder(
-        animation: _blinkController,
-        builder: (context, child) {
-          return Opacity(
-            opacity: isZero
-                ? (_blinkController.value < AppConstants.blinkThreshold
-                    ? AppConstants.blinkMinOpacity
-                    : 1.0)
-                : 1.0,
-            child: Text(
-              _formatDuration(widget.timer.remainingSeconds),
-              style:
-                  Theme.of(context).textTheme.displayLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.inverseSurface,
-                    fontSize: AppSizes.timerFontSize,
-                  ) ??
-                  TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.inverseSurface,
-                    fontSize: AppSizes.timerFontSize,
-                  ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Semantics(
+            label: 'Diminuir tempo',
+            button: true,
+            child: IconButton(
+              icon: const Icon(Icons.remove),
+              onPressed: widget.isRunning ? null : widget.onDecrement,
+              tooltip: 'Diminuir tempo',
             ),
-          );
-        },
+          ),
+          const SizedBox(width: AppSizes.spacingL),
+          Flexible(
+            child: AnimatedBuilder(
+              animation: _blinkController,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: isZero
+                      ? (_blinkController.value < AppConstants.blinkThreshold
+                            ? AppConstants.blinkMinOpacity
+                            : 1.0)
+                      : 1.0,
+                  child: Text(
+                    _formatDuration(widget.timer.remainingSeconds),
+                    style:
+                        Theme.of(context).textTheme.displayLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.inverseSurface,
+                          fontSize: AppSizes.timerFontSize,
+                        ) ??
+                        TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.inverseSurface,
+                          fontSize: AppSizes.timerFontSize,
+                        ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(width: AppSizes.spacingL),
+          Semantics(
+            label: 'Aumentar tempo',
+            button: true,
+            child: IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: widget.isRunning ? null : widget.onIncrement,
+              tooltip: 'Aumentar tempo',
+            ),
+          ),
+        ],
       ),
     );
   }
