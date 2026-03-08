@@ -11,11 +11,11 @@ class TimerDisplay extends StatelessWidget {
 
   int _getDefaultSeconds() {
     if (timer.currentModeIndex == breakModeIndex) {
-      return timer.breakTime;
+      return timer.durations.shortBreak;
     } else if (timer.currentModeIndex == longBreakModeIndex) {
-      return timer.longBreakTime;
+      return timer.durations.longBreak;
     }
-    return timer.focusTime;
+    return timer.durations.focus;
   }
 
   String _formatDuration(int? seconds) {

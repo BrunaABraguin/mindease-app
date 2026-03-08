@@ -14,9 +14,11 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       repository = TimerRepository();
       timer = TimerEntity(
-        focusTime: 1500,
-        breakTime: 300,
-        longBreakTime: 900,
+        durations: const TimerDurations(
+          focus: 1500,
+          shortBreak: 300,
+          longBreak: 900,
+        ),
         currentCycle: 2,
         totalCycles: 4,
         remainingSeconds: 1200,
@@ -29,9 +31,9 @@ void main() {
       await repository.saveTimerEntity(timer);
       final loaded = await repository.loadTimerEntity();
       expect(loaded, isNotNull);
-      expect(loaded!.focusTime, timer.focusTime);
-      expect(loaded.breakTime, timer.breakTime);
-      expect(loaded.longBreakTime, timer.longBreakTime);
+      expect(loaded!.durations.focus, timer.durations.focus);
+      expect(loaded.durations.shortBreak, timer.durations.shortBreak);
+      expect(loaded.durations.longBreak, timer.durations.longBreak);
       expect(loaded.currentCycle, timer.currentCycle);
       expect(loaded.totalCycles, timer.totalCycles);
       expect(loaded.remainingSeconds, timer.remainingSeconds);

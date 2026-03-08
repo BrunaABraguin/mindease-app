@@ -5,18 +5,20 @@ void main() {
   group('TimerEntity', () {
     test('should create a valid instance', () {
       final timer = TimerEntity(
-        focusTime: 25,
-        breakTime: 5,
-        longBreakTime: 15,
+        durations: const TimerDurations(
+          focus: 25,
+          shortBreak: 5,
+          longBreak: 15,
+        ),
         currentCycle: 1,
         totalCycles: 4,
         remainingSeconds: 1500,
         completedSessions: 0,
         currentModeIndex: 0,
       );
-      expect(timer.focusTime, 25);
-      expect(timer.breakTime, 5);
-      expect(timer.longBreakTime, 15);
+      expect(timer.durations.focus, 25);
+      expect(timer.durations.shortBreak, 5);
+      expect(timer.durations.longBreak, 15);
       expect(timer.currentCycle, 1);
       expect(timer.totalCycles, 4);
       expect(timer.remainingSeconds, 1500);
@@ -26,9 +28,11 @@ void main() {
 
     test('copyWith should update fields', () {
       final timer = TimerEntity(
-        focusTime: 25,
-        breakTime: 5,
-        longBreakTime: 15,
+        durations: const TimerDurations(
+          focus: 25,
+          shortBreak: 5,
+          longBreak: 15,
+        ),
         currentCycle: 1,
         totalCycles: 4,
         remainingSeconds: 1500,
@@ -36,18 +40,20 @@ void main() {
         currentModeIndex: 0,
       );
       final updated = timer.copyWith(
-        focusTime: 30,
-        breakTime: 10,
-        longBreakTime: 20,
+        durations: const TimerDurations(
+          focus: 30,
+          shortBreak: 10,
+          longBreak: 20,
+        ),
         currentCycle: 2,
         totalCycles: 6,
         remainingSeconds: 1200,
         completedSessions: 1,
         currentModeIndex: 1,
       );
-      expect(updated.focusTime, 30);
-      expect(updated.breakTime, 10);
-      expect(updated.longBreakTime, 20);
+      expect(updated.durations.focus, 30);
+      expect(updated.durations.shortBreak, 10);
+      expect(updated.durations.longBreak, 20);
       expect(updated.currentCycle, 2);
       expect(updated.totalCycles, 6);
       expect(updated.remainingSeconds, 1200);
@@ -57,34 +63,44 @@ void main() {
 
     test('copyWith should not mutate original instance', () {
       final timer = TimerEntity(
-        focusTime: 25,
-        breakTime: 5,
-        longBreakTime: 15,
+        durations: const TimerDurations(
+          focus: 25,
+          shortBreak: 5,
+          longBreak: 15,
+        ),
         currentCycle: 1,
         totalCycles: 4,
         remainingSeconds: 1500,
         completedSessions: 0,
         currentModeIndex: 0,
       );
-      final updated = timer.copyWith(focusTime: 99);
+      final updated = timer.copyWith(
+        durations: const TimerDurations(
+          focus: 99,
+          shortBreak: 5,
+          longBreak: 15,
+        ),
+      );
       // Original instance remains unchanged
-      expect(timer.focusTime, 25);
-      expect(timer.breakTime, 5);
-      expect(timer.longBreakTime, 15);
+      expect(timer.durations.focus, 25);
+      expect(timer.durations.shortBreak, 5);
+      expect(timer.durations.longBreak, 15);
       expect(timer.currentCycle, 1);
       expect(timer.totalCycles, 4);
       expect(timer.remainingSeconds, 1500);
       expect(timer.completedSessions, 0);
       expect(timer.currentModeIndex, 0);
       // Updated instance has the new value
-      expect(updated.focusTime, 99);
+      expect(updated.durations.focus, 99);
     });
 
     test('copyWith should keep original values if not provided', () {
       final timer = TimerEntity(
-        focusTime: 25,
-        breakTime: 5,
-        longBreakTime: 15,
+        durations: const TimerDurations(
+          focus: 25,
+          shortBreak: 5,
+          longBreak: 15,
+        ),
         currentCycle: 1,
         totalCycles: 4,
         remainingSeconds: 1500,
@@ -92,9 +108,9 @@ void main() {
         currentModeIndex: 0,
       );
       final updated = timer.copyWith();
-      expect(updated.focusTime, 25);
-      expect(updated.breakTime, 5);
-      expect(updated.longBreakTime, 15);
+      expect(updated.durations.focus, 25);
+      expect(updated.durations.shortBreak, 5);
+      expect(updated.durations.longBreak, 15);
       expect(updated.currentCycle, 1);
       expect(updated.totalCycles, 4);
       expect(updated.remainingSeconds, 1500);
@@ -104,18 +120,16 @@ void main() {
 
     test('should handle zero and negative values', () {
       final timer = TimerEntity(
-        focusTime: 0,
-        breakTime: -5,
-        longBreakTime: 0,
+        durations: const TimerDurations(focus: 0, shortBreak: -5, longBreak: 0),
         currentCycle: -1,
         totalCycles: 0,
         remainingSeconds: -100,
         completedSessions: -2,
         currentModeIndex: -1,
       );
-      expect(timer.focusTime, 0);
-      expect(timer.breakTime, -5);
-      expect(timer.longBreakTime, 0);
+      expect(timer.durations.focus, 0);
+      expect(timer.durations.shortBreak, -5);
+      expect(timer.durations.longBreak, 0);
       expect(timer.currentCycle, -1);
       expect(timer.totalCycles, 0);
       expect(timer.remainingSeconds, -100);
@@ -126,23 +140,81 @@ void main() {
     test('should handle large integer values', () {
       const maxInt = 9223372036854775807;
       final timer = TimerEntity(
-        focusTime: maxInt,
-        breakTime: maxInt,
-        longBreakTime: maxInt,
+        durations: const TimerDurations(
+          focus: maxInt,
+          shortBreak: maxInt,
+          longBreak: maxInt,
+        ),
         currentCycle: maxInt,
         totalCycles: maxInt,
         remainingSeconds: maxInt,
         completedSessions: maxInt,
         currentModeIndex: maxInt,
       );
-      expect(timer.focusTime, maxInt);
-      expect(timer.breakTime, maxInt);
-      expect(timer.longBreakTime, maxInt);
+      expect(timer.durations.focus, maxInt);
+      expect(timer.durations.shortBreak, maxInt);
+      expect(timer.durations.longBreak, maxInt);
       expect(timer.currentCycle, maxInt);
       expect(timer.totalCycles, maxInt);
       expect(timer.remainingSeconds, maxInt);
       expect(timer.completedSessions, maxInt);
       expect(timer.currentModeIndex, maxInt);
+    });
+
+    test('toString returns correct format', () {
+      final timer = TimerEntity(
+        durations: const TimerDurations(
+          focus: 25,
+          shortBreak: 5,
+          longBreak: 15,
+        ),
+        currentCycle: 1,
+        totalCycles: 4,
+        remainingSeconds: 1500,
+        completedSessions: 0,
+        currentModeIndex: 0,
+      );
+      expect(
+        timer.toString(),
+        'TimerEntity(durations: TimerDurations(focus: 25, shortBreak: 5, longBreak: 15), currentCycle: 1, totalCycles: 4, remainingSeconds: 1500, completedSessions: 0, currentModeIndex: 0)',
+      );
+    });
+
+    test('equality and hashCode', () {
+      final timer1 = TimerEntity(
+        durations: const TimerDurations(
+          focus: 25,
+          shortBreak: 5,
+          longBreak: 15,
+        ),
+        currentCycle: 1,
+        totalCycles: 4,
+        remainingSeconds: 1500,
+        completedSessions: 0,
+        currentModeIndex: 0,
+      );
+      final timer2 = TimerEntity(
+        durations: const TimerDurations(
+          focus: 25,
+          shortBreak: 5,
+          longBreak: 15,
+        ),
+        currentCycle: 1,
+        totalCycles: 4,
+        remainingSeconds: 1500,
+        completedSessions: 0,
+        currentModeIndex: 0,
+      );
+      final timer3 = timer1.copyWith(
+        durations: const TimerDurations(
+          focus: 30,
+          shortBreak: 5,
+          longBreak: 15,
+        ),
+      );
+      expect(timer1, equals(timer2));
+      expect(timer1.hashCode, equals(timer2.hashCode));
+      expect(timer1, isNot(equals(timer3)));
     });
   });
 }

@@ -13,9 +13,11 @@ class TimerRepository implements TimerRepositoryBase {
   Future<void> saveTimerEntity(TimerEntity timer) async {
     final prefs = await _prefsFuture;
     final timerMap = {
-      'focusTime': timer.focusTime,
-      'breakTime': timer.breakTime,
-      'longBreakTime': timer.longBreakTime,
+      'durations': {
+        'focus': timer.durations.focus,
+        'shortBreak': timer.durations.shortBreak,
+        'longBreak': timer.durations.longBreak,
+      },
       'currentCycle': timer.currentCycle,
       'totalCycles': timer.totalCycles,
       'remainingSeconds': timer.remainingSeconds,
@@ -37,10 +39,11 @@ class TimerRepository implements TimerRepositoryBase {
         return null;
       }
       final map = decoded;
-
-      if (map['focusTime'] is! int ||
-          map['breakTime'] is! int ||
-          map['longBreakTime'] is! int ||
+      final durationsMap = map['durations'] as Map<String, dynamic>?;
+      if (durationsMap == null ||
+          durationsMap['focus'] is! int ||
+          durationsMap['shortBreak'] is! int ||
+          durationsMap['longBreak'] is! int ||
           map['currentCycle'] is! int ||
           map['totalCycles'] is! int ||
           map['completedSessions'] is! int ||
@@ -52,11 +55,12 @@ class TimerRepository implements TimerRepositoryBase {
       if (remainingSecondsValue != null && remainingSecondsValue is! int) {
         return null;
       }
-
       return TimerEntity(
-        focusTime: map['focusTime'] as int,
-        breakTime: map['breakTime'] as int,
-        longBreakTime: map['longBreakTime'] as int,
+        durations: TimerDurations(
+          focus: durationsMap['focus'] as int,
+          shortBreak: durationsMap['shortBreak'] as int,
+          longBreak: durationsMap['longBreak'] as int,
+        ),
         currentCycle: map['currentCycle'] as int,
         totalCycles: map['totalCycles'] as int,
         remainingSeconds: remainingSecondsValue as int?,

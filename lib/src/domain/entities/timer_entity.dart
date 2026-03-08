@@ -1,8 +1,41 @@
+class TimerDurations {
+  const TimerDurations({
+    required this.focus,
+    required this.shortBreak,
+    required this.longBreak,
+  });
+  final int focus;
+  final int shortBreak;
+  final int longBreak;
+
+  TimerDurations copyWith({int? focus, int? shortBreak, int? longBreak}) {
+    return TimerDurations(
+      focus: focus ?? this.focus,
+      shortBreak: shortBreak ?? this.shortBreak,
+      longBreak: longBreak ?? this.longBreak,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TimerDurations &&
+          runtimeType == other.runtimeType &&
+          focus == other.focus &&
+          shortBreak == other.shortBreak &&
+          longBreak == other.longBreak;
+
+  @override
+  int get hashCode => focus.hashCode ^ shortBreak.hashCode ^ longBreak.hashCode;
+
+  @override
+  String toString() =>
+      'TimerDurations(focus: $focus, shortBreak: $shortBreak, longBreak: $longBreak)';
+}
+
 class TimerEntity {
   TimerEntity({
-    required this.focusTime,
-    required this.breakTime,
-    required this.longBreakTime,
+    required this.durations,
     required this.currentCycle,
     required this.totalCycles,
     this.remainingSeconds,
@@ -10,9 +43,7 @@ class TimerEntity {
     required this.currentModeIndex,
   });
 
-  final int focusTime;
-  final int breakTime;
-  final int longBreakTime;
+  final TimerDurations durations;
   final int currentCycle;
   final int totalCycles;
   final int? remainingSeconds;
@@ -20,9 +51,7 @@ class TimerEntity {
   final int currentModeIndex;
 
   TimerEntity copyWith({
-    int? focusTime,
-    int? breakTime,
-    int? longBreakTime,
+    TimerDurations? durations,
     int? currentCycle,
     int? totalCycles,
     Object? remainingSeconds = _noValue,
@@ -30,12 +59,12 @@ class TimerEntity {
     int? currentModeIndex,
   }) {
     return TimerEntity(
-      focusTime: focusTime ?? this.focusTime,
-      breakTime: breakTime ?? this.breakTime,
-      longBreakTime: longBreakTime ?? this.longBreakTime,
+      durations: durations ?? this.durations,
       currentCycle: currentCycle ?? this.currentCycle,
       totalCycles: totalCycles ?? this.totalCycles,
-      remainingSeconds: remainingSeconds == _noValue ? this.remainingSeconds : remainingSeconds as int?,
+      remainingSeconds: remainingSeconds == _noValue
+          ? this.remainingSeconds
+          : remainingSeconds as int?,
       completedSessions: completedSessions ?? this.completedSessions,
       currentModeIndex: currentModeIndex ?? this.currentModeIndex,
     );
@@ -45,7 +74,7 @@ class TimerEntity {
 
   @override
   String toString() {
-    return 'TimerEntity(focusTime: $focusTime, breakTime: $breakTime, longBreakTime: $longBreakTime, currentCycle: $currentCycle, totalCycles: $totalCycles, remainingSeconds: $remainingSeconds, completedSessions: $completedSessions, currentModeIndex: $currentModeIndex)';
+    return 'TimerEntity(durations: $durations, currentCycle: $currentCycle, totalCycles: $totalCycles, remainingSeconds: $remainingSeconds, completedSessions: $completedSessions, currentModeIndex: $currentModeIndex)';
   }
 
   @override
@@ -53,9 +82,7 @@ class TimerEntity {
       identical(this, other) ||
       other is TimerEntity &&
           runtimeType == other.runtimeType &&
-          focusTime == other.focusTime &&
-          breakTime == other.breakTime &&
-          longBreakTime == other.longBreakTime &&
+          durations == other.durations &&
           currentCycle == other.currentCycle &&
           totalCycles == other.totalCycles &&
           remainingSeconds == other.remainingSeconds &&
@@ -64,9 +91,7 @@ class TimerEntity {
 
   @override
   int get hashCode =>
-      focusTime.hashCode ^
-      breakTime.hashCode ^
-      longBreakTime.hashCode ^
+      durations.hashCode ^
       currentCycle.hashCode ^
       totalCycles.hashCode ^
       (remainingSeconds?.hashCode ?? 0) ^
