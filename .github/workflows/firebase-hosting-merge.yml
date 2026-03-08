@@ -48,9 +48,6 @@ jobs:
         with:
           name: env
 
-      - name: Move env file to web directory
-        run: mv env web/env
-
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
