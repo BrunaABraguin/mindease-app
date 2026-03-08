@@ -96,16 +96,11 @@ class _TimerViewState extends State<TimerView> {
                     ],
                   ),
                   const SizedBox(height: AppSizes.spacingS),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TimerSegmentedButton(
-                        selectedIndex: state.currentModeIndex,
-                        onChanged: (index) {
-                          context.read<TimerCubit>().setCurrentModeIndex(index);
-                        },
-                      ),
-                    ],
+                  TimerSegmentedButton(
+                    selectedIndex: state.currentModeIndex,
+                    onChanged: (index) {
+                      context.read<TimerCubit>().setCurrentModeIndex(index);
+                    },
                   ),
                 ],
               ),
