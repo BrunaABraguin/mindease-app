@@ -30,7 +30,12 @@ class _TimerPageState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => TimerCubit(timerRepository: widget.timerRepository),
+      create: (ctx) => TimerCubit(
+        timerRepository: widget.timerRepository,
+        onFocusSessionCompleted: (minutes) async {
+          ctx.read<ProfileCubit>().addFocusMinutes(minutes);
+        },
+      ),
       child: const TimerView(),
     );
   }
@@ -65,8 +70,14 @@ class _TimerViewState extends State<TimerView> {
               ),
               child: FocusModeButton(
                 onPressed: () {
+                  final timerCubit = context.read<TimerCubit>();
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const FocusModePage()),
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: timerCubit,
+                        child: const FocusModePage(),
+                      ),
+                    ),
                   );
                 },
               ),

@@ -1,20 +1,3 @@
-## 6. Textos e Mensagens
-
-* Nunca escreva textos literais (hard coded) diretamente em widgets, componentes ou páginas.
-* Sempre defina textos de interface, mensagens de ajuda, tooltips, títulos, descrições e mensagens amigáveis em arquivos de constantes, como `help_texts.dart` ou arquivos similares.
-* Para adicionar um novo texto, crie uma constante no arquivo de textos e utilize-a no widget/componente correspondente.
-* Isso facilita manutenção, tradução e padronização dos textos em toda a aplicação.
-
-### Exemplo
-
-```dart
-// help_texts.dart
-static const String cyclesCompletedMessage = 'Parabéns! Você completou todos os ciclos de foco. Faça uma pausa antes de recomeçar.';
-
-// Uso no widget
-Text(HelpTexts.cyclesCompletedMessage)
-```
-
 # Instruções para uso do Copilot neste projeto
 
 ## 1. Tokens e Constantes
@@ -27,6 +10,8 @@ Text(HelpTexts.cyclesCompletedMessage)
 
 * Prefira extrair lógica de negócio para controllers/cubits/blocs.
 * Mantenha widgets focados apenas em UI e delegue lógica para camadas apropriadas.
+* Sempre que um widget privado (ex: `_MeuBotao`) for reutilizável ou autocontido, extraia-o para um arquivo próprio em `lib/src/app/widgets/` como classe pública (ex: `MeuBotao` em `meu_botao.dart`).
+* Evite manter widgets privados dentro de páginas; prefira componentes separados para facilitar testes e reuso.
 
 ## 3. Testes
 
@@ -45,3 +30,20 @@ Text(HelpTexts.cyclesCompletedMessage)
 ---
 
 Essas instruções garantem consistência, manutenibilidade e qualidade no projeto. Siga sempre antes de submeter PRs ou novas features.
+
+## 6. Textos e Mensagens
+
+* Nunca escreva textos literais (hard coded) diretamente em widgets, componentes ou páginas.
+* Sempre defina textos de interface, mensagens de ajuda, tooltips, títulos, descrições e mensagens amigáveis em arquivos de constantes, como `help_texts.dart` ou arquivos similares.
+* Para adicionar um novo texto, crie uma constante no arquivo de textos e utilize-a no widget/componente correspondente.
+* Isso facilita manutenção, tradução e padronização dos textos em toda a aplicação.
+
+### Exemplo
+
+```dart
+// help_texts.dart
+static const String cyclesCompletedMessage = 'Parabéns! Você completou todos os ciclos de foco. Faça uma pausa antes de recomeçar.';
+
+// Uso no widget
+Text(HelpTexts.cyclesCompletedMessage)
+```

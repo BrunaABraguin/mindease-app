@@ -3,6 +3,7 @@ import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
 import 'package:mindease_app/src/domain/entities/preferences.dart';
 
 import '../mocks/fake_auth_usecases.dart';
+import '../mocks/fake_profile_repository.dart';
 import '../mocks/mock_preferences_repository.dart';
 
 void main() {
@@ -13,6 +14,7 @@ void main() {
       repo = MockPreferencesRepository();
       cubit = ProfileCubit(
         preferencesRepository: repo,
+        profileRepository: FakeProfileRepository(),
         getAuthState: FakeGetAuthStateUseCase(),
         signInWithGoogle: FakeSignInWithGoogleUseCase(),
         signOut: FakeSignOutUseCase(),

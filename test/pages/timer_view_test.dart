@@ -6,12 +6,14 @@ import 'package:mindease_app/src/app/pages/timer/timer_view.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart';
 
 import '../mocks/fake_auth_usecases.dart';
+import '../mocks/fake_profile_repository.dart';
 import '../mocks/mock_preferences_repository.dart';
 
 void main() {
   testWidgets('TimerPage renders TimerView', (tester) async {
     final profileCubit = ProfileCubit(
       preferencesRepository: MockPreferencesRepository(),
+      profileRepository: FakeProfileRepository(),
       getAuthState: FakeGetAuthStateUseCase(),
       signInWithGoogle: FakeSignInWithGoogleUseCase(),
       signOut: FakeSignOutUseCase(),

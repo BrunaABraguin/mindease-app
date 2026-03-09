@@ -4,6 +4,17 @@ class TimerDurations {
     required this.shortBreak,
     required this.longBreak,
   });
+
+  static const int defaultFocus = 25 * Duration.secondsPerMinute;
+  static const int defaultShortBreak = 5 * Duration.secondsPerMinute;
+  static const int defaultLongBreak = 15 * Duration.secondsPerMinute;
+
+  static const TimerDurations defaults = TimerDurations(
+    focus: defaultFocus,
+    shortBreak: defaultShortBreak,
+    longBreak: defaultLongBreak,
+  );
+
   final int focus;
   final int shortBreak;
   final int longBreak;

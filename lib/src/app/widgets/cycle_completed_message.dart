@@ -17,7 +17,9 @@ class CycleCompletedMessage extends StatelessWidget {
             children: [
               const SizedBox(height: AppSizes.spacingXs),
               ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 320),
+                constraints: const BoxConstraints(
+                  maxWidth: AppSizes.cycleCompletedMaxWidth,
+                ),
                 child: Text(
                   HelpTexts.cyclesCompletedMessage,
                   textAlign: TextAlign.center,

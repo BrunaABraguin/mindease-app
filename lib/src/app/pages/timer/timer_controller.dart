@@ -8,13 +8,10 @@ class TimerCubit extends Cubit<TimerEntity> {
   TimerCubit({
     required this.timerRepository,
     this.tickDuration = defaultTickDuration,
+    this.onFocusSessionCompleted,
   }) : super(
          TimerEntity(
-           durations: const TimerDurations(
-             focus: 25 * Duration.secondsPerMinute,
-             shortBreak: 5 * Duration.secondsPerMinute,
-             longBreak: 15 * Duration.secondsPerMinute,
-           ),
+           durations: TimerDurations.defaults,
            currentCycle: 0,
            totalCycles: 4,
            completedSessions: 0,
@@ -44,6 +41,7 @@ class TimerCubit extends Cubit<TimerEntity> {
   }
 
   final Duration tickDuration;
+  final Future<void> Function(int focusMinutes)? onFocusSessionCompleted;
   void resetTimer() {
     final int total = getTotalSeconds();
     final updatedState = state.copyWith(
@@ -104,7 +102,9 @@ class TimerCubit extends Cubit<TimerEntity> {
         emit(updatedState);
         await timerRepository.saveTimerEntity(updatedState);
       } else if (state.currentCycle < state.totalCycles) {
-        // Se for sessão normal, incrementa
+        final focusMinutes = state.durations.focus ~/ Duration.secondsPerMinute;
+        await onFocusSessionCompleted?.call(focusMinutes);
+
         final incrementedCycle = state.currentCycle + 1;
         final updatedState = state.copyWith(currentCycle: incrementedCycle);
         emit(updatedState);
@@ -121,7 +121,36 @@ class TimerCubit extends Cubit<TimerEntity> {
     }
   }
 
+  /// Permanently updates the duration for the current mode and sets
+  /// [remainingSeconds] to [seconds]. The new duration is persisted, so
+  /// subsequent resets will use this value.
   void setTimerSeconds(int seconds) {
+    final durations = state.durations;
+    TimerDurations newDurations;
+    switch (state.currentModeIndex) {
+      case modeShortBreak:
+        newDurations = durations.copyWith(shortBreak: seconds);
+        break;
+      case modeLongBreak:
+        newDurations = durations.copyWith(longBreak: seconds);
+        break;
+      default:
+        newDurations = durations.copyWith(focus: seconds);
+        break;
+    }
+    final updatedState = state.copyWith(
+      durations: newDurations,
+      remainingSeconds: seconds,
+      isRunning: false,
+    );
+    emit(updatedState);
+    timerRepository.saveTimerEntity(updatedState);
+  }
+
+  /// Sets [remainingSeconds] without changing the saved mode duration.
+  /// Use this for one-off countdown adjustments that should not persist
+  /// across resets.
+  void overrideRemainingSeconds(int seconds) {
     final updatedState = state.copyWith(
       remainingSeconds: seconds,
       isRunning: false,
@@ -184,7 +213,19 @@ class TimerCubit extends Cubit<TimerEntity> {
   Future<void> _loadTimerEntity() async {
     final loaded = await timerRepository.loadTimerEntity();
     if (loaded != null) {
-      emit(loaded);
+      final durations = loaded.durations;
+      final corrected = TimerDurations(
+        focus: durations.focus >= 0
+            ? durations.focus
+            : TimerDurations.defaultFocus,
+        shortBreak: durations.shortBreak >= 0
+            ? durations.shortBreak
+            : TimerDurations.defaultShortBreak,
+        longBreak: durations.longBreak >= 0
+            ? durations.longBreak
+            : TimerDurations.defaultLongBreak,
+      );
+      emit(loaded.copyWith(durations: corrected));
     }
   }
 

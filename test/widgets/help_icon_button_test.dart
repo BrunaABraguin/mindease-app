@@ -6,6 +6,7 @@ import 'package:mindease_app/src/app/utils/help_texts.dart';
 import 'package:mindease_app/src/app/widgets/help_icon_button.dart';
 
 import '../mocks/fake_auth_usecases.dart';
+import '../mocks/fake_profile_repository.dart';
 import '../repositories/fake_preferences_repository.dart';
 
 void main() {
@@ -17,6 +18,7 @@ void main() {
         home: BlocProvider<ProfileCubit>(
           create: (_) => ProfileCubit(
             preferencesRepository: FakePreferencesRepository(),
+            profileRepository: FakeProfileRepository(),
             getAuthState: FakeGetAuthStateUseCase(),
             signInWithGoogle: FakeSignInWithGoogleUseCase(),
             signOut: FakeSignOutUseCase(),
