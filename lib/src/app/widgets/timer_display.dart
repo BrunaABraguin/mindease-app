@@ -10,12 +10,14 @@ class TimerDisplay extends StatefulWidget {
     required this.onDecrement,
     required this.isRunning,
     required this.onSetValue,
+    required this.showAnimations,
   });
   final TimerEntity timer;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
   final bool isRunning;
   final void Function(String value) onSetValue;
+  final bool showAnimations;
 
   @override
   State<TimerDisplay> createState() => _TimerDisplayState();
@@ -55,7 +57,7 @@ class _TimerDisplayState extends State<TimerDisplay>
     final isZero =
         widget.timer.remainingSeconds == null ||
         widget.timer.remainingSeconds! <= 0;
-    if (isZero) {
+    if (isZero && widget.showAnimations) {
       if (!_blinkController.isAnimating) {
         _blinkController.repeat(reverse: true);
       }
@@ -86,15 +88,22 @@ class _TimerDisplayState extends State<TimerDisplay>
 
   TextStyle _timerTextStyle(BuildContext context) {
     final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = AppSizes.timerFontSize;
+    if (screenWidth < AppSizes.breakpointMobile) {
+      fontSize = 40;
+    } else if (screenWidth < AppSizes.breakpointTablet) {
+      fontSize = 60;
+    }
     return theme.textTheme.displayLarge?.copyWith(
           fontWeight: FontWeight.bold,
           color: theme.colorScheme.inverseSurface,
-          fontSize: AppSizes.timerFontSize,
+          fontSize: fontSize,
         ) ??
         TextStyle(
           fontWeight: FontWeight.bold,
           color: theme.colorScheme.inverseSurface,
-          fontSize: AppSizes.timerFontSize,
+          fontSize: fontSize,
         );
   }
 
@@ -135,6 +144,19 @@ class _TimerDisplayState extends State<TimerDisplay>
     final isMax =
         widget.timer.remainingSeconds != null &&
         widget.timer.remainingSeconds! >= timerMaxSeconds;
+    final screenWidth = MediaQuery.of(context).size.width;
+    double iconSize = AppSizes.iconMedium;
+    double spacing = AppSizes.spacingL;
+    double textFieldWidth = AppSizes.buttonMinWidthMedium;
+    if (screenWidth < AppSizes.breakpointMobile) {
+      iconSize = 32;
+      spacing = 8;
+      textFieldWidth = 80;
+    } else if (screenWidth < AppSizes.breakpointTablet) {
+      iconSize = 40;
+      spacing = 16;
+      textFieldWidth = 100;
+    }
     return Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -143,12 +165,12 @@ class _TimerDisplayState extends State<TimerDisplay>
             label: 'Diminuir tempo',
             button: true,
             child: IconButton(
-              icon: const Icon(Icons.remove_circle, size: AppSizes.iconMedium),
+              icon: Icon(Icons.remove_circle, size: iconSize),
               onPressed: widget.isRunning || isZero ? null : widget.onDecrement,
               tooltip: 'Diminuir tempo',
             ),
           ),
-          const SizedBox(width: AppSizes.spacingL),
+          SizedBox(width: spacing),
           Flexible(
             child: AnimatedBuilder(
               animation: _blinkController,
@@ -163,7 +185,7 @@ class _TimerDisplayState extends State<TimerDisplay>
                     onDoubleTap: widget.isRunning ? null : _startEditing,
                     child: _editing
                         ? SizedBox(
-                            width: AppSizes.buttonMinWidthMedium,
+                            width: textFieldWidth,
                             child: TextField(
                               controller: _controller,
                               focusNode: _focusNode,
@@ -190,12 +212,12 @@ class _TimerDisplayState extends State<TimerDisplay>
               },
             ),
           ),
-          const SizedBox(width: AppSizes.spacingL),
+          SizedBox(width: spacing),
           Semantics(
             label: 'Aumentar tempo',
             button: true,
             child: IconButton(
-              icon: const Icon(Icons.add_circle, size: AppSizes.iconMedium),
+              icon: Icon(Icons.add_circle, size: iconSize),
               onPressed: widget.isRunning || isMax ? null : widget.onIncrement,
               tooltip: 'Aumentar tempo',
             ),

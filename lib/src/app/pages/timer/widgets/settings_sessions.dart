@@ -38,7 +38,7 @@ class SettingsSessions extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.remove_circle_outline),
               color: iconColor,
-              onPressed: (isRunning || totalCycles <= 10)
+              onPressed: (isRunning || totalCycles <= 1)
                   ? null
                   : onDecrement,
             ),

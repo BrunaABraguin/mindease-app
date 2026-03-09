@@ -15,7 +15,7 @@ class TimerCubit extends Cubit<TimerEntity> {
              shortBreak: 5 * Duration.secondsPerMinute,
              longBreak: 15 * Duration.secondsPerMinute,
            ),
-           currentCycle: 1,
+           currentCycle: 0,
            totalCycles: 4,
            completedSessions: 0,
            currentModeIndex: 0,

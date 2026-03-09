@@ -37,6 +37,7 @@ void main() {
                   });
                 }
               },
+              showAnimations: true,
             ),
           ),
         ),
@@ -85,6 +86,7 @@ void main() {
                 setValue = total;
               }
             },
+            showAnimations: true,
           ),
         ),
       ),
@@ -141,6 +143,7 @@ void main() {
                   });
                 }
               },
+              showAnimations: true,
             ),
           ),
         ),
@@ -193,6 +196,7 @@ void main() {
             onDecrement: () {},
             isRunning: false,
             onSetValue: (_) {},
+            showAnimations: true,
           ),
         ),
       ),
@@ -227,6 +231,7 @@ void main() {
             onDecrement: () {},
             isRunning: false,
             onSetValue: (_) {},
+            showAnimations: true,
           ),
         ),
       ),
@@ -259,6 +264,7 @@ void main() {
             onDecrement: () {},
             isRunning: false,
             onSetValue: (_) {},
+            showAnimations: true,
           ),
         ),
       ),
@@ -290,6 +296,7 @@ void main() {
             onDecrement: () {},
             isRunning: true,
             onSetValue: (_) {},
+            showAnimations: true,
           ),
         ),
       ),
@@ -338,6 +345,7 @@ void main() {
             },
             isRunning: false,
             onSetValue: (_) {},
+            showAnimations: true,
           ),
         ),
       ),

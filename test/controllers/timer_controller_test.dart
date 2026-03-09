@@ -31,7 +31,7 @@ void main() {
   });
 
   test('initial state is correct', () {
-    expect(cubit.state.currentCycle, 1);
+    expect(cubit.state.currentCycle, 0);
     expect(cubit.state.totalCycles, 4);
     expect(cubit.state.completedSessions, 0);
     expect(cubit.state.currentModeIndex, 0);
