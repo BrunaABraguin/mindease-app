@@ -1,10 +1,14 @@
 import 'dart:developer' as developer;
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mindease_app/firebase_options.dart';
 import 'package:mindease_app/src/app/navigator.dart';
+import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
+import 'package:mindease_app/src/data/di/auth_di.dart';
+import 'package:mindease_app/src/data/repositories/preferences_repository.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
 import 'package:mindease_app/theme.dart';
@@ -17,6 +21,7 @@ Future<void> main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     Bloc.observer = const AppBlocObserver();
+
     runApp(const Mindease());
   } on Object catch (error, stack) {
     developer.log('[Bootstrap error] $error\n$stack', name: 'Bootstrap');
@@ -65,7 +70,23 @@ class Mindease extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (_) => ThemeCubit(), child: const AppView());
+    final preferencesRepository = PreferencesRepository();
+    final timerRepository = repo.TimerRepository();
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: preferencesRepository),
+        RepositoryProvider.value(value: timerRepository),
+      ],
+      child: BlocProvider<ProfileCubit>(
+        create: (_) => ProfileCubit(
+          preferencesRepository: preferencesRepository,
+          getAuthState: getAuthStateUseCase,
+          signInWithGoogle: signInWithGoogleUseCase,
+          signOut: signOutUseCase,
+        ),
+        child: const AppView(),
+      ),
+    );
   }
 }
 
@@ -74,33 +95,16 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeCubit, ThemeData>(
-      builder: (_, theme) {
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        final isDark = state.preferences.darkTheme;
+        final timerRepository = context.read<repo.TimerRepository>();
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: theme,
-          home: AppNavigator(
-            onToggleTheme: context.read<ThemeCubit>().toggleTheme,
-            timerRepository: repo.TimerRepository(),
-          ),
+          theme: isDark ? AppTheme.darkTheme : AppTheme.lightTheme,
+          home: AppNavigator(timerRepository: timerRepository),
         );
       },
     );
-  }
-}
-
-/// {@template brightness_cubit}
-/// A simple [Cubit] that manages the [ThemeData] as its state.
-/// {@endtemplate}
-class ThemeCubit extends Cubit<ThemeData> {
-  /// {@macro brightness_cubit}
-  ThemeCubit() : super(_lightTheme);
-
-  static final _lightTheme = AppTheme.lightTheme;
-  static final _darkTheme = AppTheme.darkTheme;
-
-  /// Toggles the current brightness between light and dark.
-  void toggleTheme() {
-    emit(state.brightness == Brightness.dark ? _lightTheme : _darkTheme);
   }
 }

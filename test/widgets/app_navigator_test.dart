@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindease_app/src/app/navigator.dart';
+import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
 import 'package:mindease_app/theme.dart';
+
+import '../mocks/fake_auth_usecases.dart';
+import '../repositories/fake_preferences_repository.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +24,15 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.lightTheme,
-        home: AppNavigator(timerRepository: repo.TimerRepository()),
+        home: BlocProvider<ProfileCubit>(
+          create: (_) => ProfileCubit(
+            preferencesRepository: FakePreferencesRepository(),
+            getAuthState: FakeGetAuthStateUseCase(),
+            signInWithGoogle: FakeSignInWithGoogleUseCase(),
+            signOut: FakeSignOutUseCase(),
+          ),
+          child: AppNavigator(timerRepository: repo.TimerRepository()),
+        ),
       ),
     );
     await tester.pump(const Duration(seconds: 2));

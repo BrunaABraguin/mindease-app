@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindease_app/src/app/pages/focus_mode/focus_mode_view.dart';
+import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
 import 'package:mindease_app/src/app/pages/timer/timer_controller.dart';
 import 'package:mindease_app/src/app/pages/timer/widgets/settings_sessions.dart';
 import 'package:mindease_app/src/app/pages/timer/widgets/timer_control_buttons.dart';
@@ -129,6 +130,11 @@ class _TimerViewState extends State<TimerView> {
                           onIncrement: () => cubit.incrementSessionDuration(),
                           onDecrement: () => cubit.decrementSessionDuration(),
                           onSetValue: (value) => cubit.setTimerFromInput(value),
+                          showAnimations: context
+                              .read<ProfileCubit>()
+                              .state
+                              .preferences
+                              .showAnimations,
                         ),
                         // Controle de ciclos logo abaixo
                         const SizedBox(height: 24),

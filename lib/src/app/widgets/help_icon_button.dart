@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
 
 class HelpIconButton extends StatelessWidget {
@@ -15,6 +17,11 @@ class HelpIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final showHelpIcons = context.select<ProfileCubit, bool>(
+      (cubit) => cubit.state.preferences.showHelpIcons,
+    );
+    if (!showHelpIcons) return const SizedBox.shrink();
+
     return Semantics(
       label: 'Ajuda:',
       button: true,

@@ -10,12 +10,15 @@ class TimerDisplay extends StatefulWidget {
     required this.onDecrement,
     required this.isRunning,
     required this.onSetValue,
+    required this.showAnimations,
   });
+
   final TimerEntity timer;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
   final bool isRunning;
   final void Function(String value) onSetValue;
+  final bool showAnimations;
 
   @override
   State<TimerDisplay> createState() => _TimerDisplayState();
@@ -23,6 +26,11 @@ class TimerDisplay extends StatefulWidget {
 
 class _TimerDisplayState extends State<TimerDisplay>
     with SingleTickerProviderStateMixin {
+  static const int timerMinSeconds = 0;
+  static const int timerMaxMinutes = 60;
+  static const int timerMaxSeconds =
+      timerMaxMinutes * Duration.secondsPerMinute;
+
   bool _editing = false;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -35,14 +43,8 @@ class _TimerDisplayState extends State<TimerDisplay>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _updateBlinking();
     _focusNode.addListener(_onFocusChange);
-  }
-
-  void _onFocusChange() {
-    if (!_focusNode.hasFocus && _editing) {
-      _saveInput();
-    }
+    _updateBlinking();
   }
 
   @override
@@ -51,11 +53,49 @@ class _TimerDisplayState extends State<TimerDisplay>
     _updateBlinking();
   }
 
+  @override
+  void dispose() {
+    _blinkController.dispose();
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus && _editing) {
+      _saveInput();
+    }
+  }
+
+  void _startEditing() {
+    setState(() {
+      _editing = true;
+      _controller.text = _formatDuration(widget.timer.remainingSeconds);
+      _focusNode.requestFocus();
+      _controller.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _controller.text.length,
+      );
+    });
+  }
+
+  void _saveInput() {
+    widget.onSetValue(_controller.text.trim());
+    setState(() => _editing = false);
+  }
+
+  bool get _isZero =>
+      widget.timer.remainingSeconds == null ||
+      widget.timer.remainingSeconds! <= timerMinSeconds;
+
+  bool get _isMax =>
+      widget.timer.remainingSeconds != null &&
+      widget.timer.remainingSeconds! >= timerMaxSeconds;
+
+  bool get _shouldBlink => _isZero && widget.showAnimations;
+
   void _updateBlinking() {
-    final isZero =
-        widget.timer.remainingSeconds == null ||
-        widget.timer.remainingSeconds! <= 0;
-    if (isZero) {
+    if (_shouldBlink) {
       if (!_blinkController.isAnimating) {
         _blinkController.repeat(reverse: true);
       }
@@ -67,18 +107,8 @@ class _TimerDisplayState extends State<TimerDisplay>
     }
   }
 
-  @override
-  void dispose() {
-    _blinkController.dispose();
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
   String _formatDuration(int? seconds) {
-    if (seconds == null || seconds <= 0) {
-      return '00:00';
-    }
+    if (seconds == null || seconds <= 0) return '00:00';
     final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
     final secs = (seconds % 60).toString().padLeft(2, '0');
     return '$minutes:$secs';
@@ -86,75 +116,58 @@ class _TimerDisplayState extends State<TimerDisplay>
 
   TextStyle _timerTextStyle(BuildContext context) {
     final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = AppSizes.timerFontSize;
+    if (screenWidth < AppSizes.breakpointMobile) {
+      fontSize = 40;
+    } else if (screenWidth < AppSizes.breakpointTablet) {
+      fontSize = 60;
+    }
     return theme.textTheme.displayLarge?.copyWith(
           fontWeight: FontWeight.bold,
           color: theme.colorScheme.inverseSurface,
-          fontSize: AppSizes.timerFontSize,
+          fontSize: fontSize,
         ) ??
         TextStyle(
           fontWeight: FontWeight.bold,
           color: theme.colorScheme.inverseSurface,
-          fontSize: AppSizes.timerFontSize,
+          fontSize: fontSize,
         );
   }
 
-  void _startEditing() {
-    setState(() {
-      _editing = true;
-      final secs = widget.timer.remainingSeconds ?? 0;
-      final min = (secs ~/ 60).toString().padLeft(2, '0');
-      final sec = (secs % 60).toString().padLeft(2, '0');
-      _controller.text = "$min:$sec";
-      _focusNode.requestFocus();
-      _controller.selection = TextSelection(
-        baseOffset: 0,
-        extentOffset: _controller.text.length,
-      );
-    });
-  }
-
-  void _saveInput() {
-    final text = _controller.text.trim();
-    widget.onSetValue(text);
-    setState(() {
-      _editing = false;
-    });
-  }
-
-  // Timer boundaries as static constants
-  static const int timerMinSeconds = 0;
-  static const int timerMaxMinutes = 60; // Maximum of 60 minutes
-  static const int timerMaxSeconds =
-      timerMaxMinutes * Duration.secondsPerMinute;
-
   @override
   Widget build(BuildContext context) {
-    final isZero =
-        widget.timer.remainingSeconds == null ||
-        widget.timer.remainingSeconds! <= timerMinSeconds;
-    final isMax =
-        widget.timer.remainingSeconds != null &&
-        widget.timer.remainingSeconds! >= timerMaxSeconds;
+    final screenWidth = MediaQuery.of(context).size.width;
+    double iconSize = AppSizes.iconMedium;
+    double spacing = AppSizes.spacingL;
+    double textFieldWidth = AppSizes.buttonMinWidthMedium;
+    if (screenWidth < AppSizes.breakpointMobile) {
+      iconSize = 32;
+      spacing = 8;
+      textFieldWidth = 80;
+    } else if (screenWidth < AppSizes.breakpointTablet) {
+      iconSize = 40;
+      spacing = 16;
+      textFieldWidth = 100;
+    }
+
     return Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Semantics(
+          _buildIconButton(
+            icon: Icons.remove_circle,
+            size: iconSize,
             label: 'Diminuir tempo',
-            button: true,
-            child: IconButton(
-              icon: const Icon(Icons.remove_circle, size: AppSizes.iconMedium),
-              onPressed: widget.isRunning || isZero ? null : widget.onDecrement,
-              tooltip: 'Diminuir tempo',
-            ),
+            onPressed: widget.isRunning || _isZero ? null : widget.onDecrement,
           ),
-          const SizedBox(width: AppSizes.spacingL),
+          SizedBox(width: spacing),
           Flexible(
             child: AnimatedBuilder(
               animation: _blinkController,
               builder: (context, child) {
                 return Opacity(
-                  opacity: isZero
+                  opacity: _shouldBlink
                       ? (_blinkController.value < AppConstants.blinkThreshold
                             ? AppConstants.blinkMinOpacity
                             : 1.0)
@@ -163,7 +176,7 @@ class _TimerDisplayState extends State<TimerDisplay>
                     onDoubleTap: widget.isRunning ? null : _startEditing,
                     child: _editing
                         ? SizedBox(
-                            width: AppSizes.buttonMinWidthMedium,
+                            width: textFieldWidth,
                             child: TextField(
                               controller: _controller,
                               focusNode: _focusNode,
@@ -190,17 +203,31 @@ class _TimerDisplayState extends State<TimerDisplay>
               },
             ),
           ),
-          const SizedBox(width: AppSizes.spacingL),
-          Semantics(
+          SizedBox(width: spacing),
+          _buildIconButton(
+            icon: Icons.add_circle,
+            size: iconSize,
             label: 'Aumentar tempo',
-            button: true,
-            child: IconButton(
-              icon: const Icon(Icons.add_circle, size: AppSizes.iconMedium),
-              onPressed: widget.isRunning || isMax ? null : widget.onIncrement,
-              tooltip: 'Aumentar tempo',
-            ),
+            onPressed: widget.isRunning || _isMax ? null : widget.onIncrement,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildIconButton({
+    required IconData icon,
+    required double size,
+    required String label,
+    required VoidCallback? onPressed,
+  }) {
+    return Semantics(
+      label: label,
+      button: true,
+      child: IconButton(
+        icon: Icon(icon, size: size),
+        onPressed: onPressed,
+        tooltip: label,
       ),
     );
   }
