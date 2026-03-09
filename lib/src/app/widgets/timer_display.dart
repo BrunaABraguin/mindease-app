@@ -12,6 +12,7 @@ class TimerDisplay extends StatefulWidget {
     required this.onSetValue,
     required this.showAnimations,
   });
+
   final TimerEntity timer;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
@@ -25,6 +26,11 @@ class TimerDisplay extends StatefulWidget {
 
 class _TimerDisplayState extends State<TimerDisplay>
     with SingleTickerProviderStateMixin {
+  static const int timerMinSeconds = 0;
+  static const int timerMaxMinutes = 60;
+  static const int timerMaxSeconds =
+      timerMaxMinutes * Duration.secondsPerMinute;
+
   bool _editing = false;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -37,36 +43,14 @@ class _TimerDisplayState extends State<TimerDisplay>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _updateBlinking();
     _focusNode.addListener(_onFocusChange);
-  }
-
-  void _onFocusChange() {
-    if (!_focusNode.hasFocus && _editing) {
-      _saveInput();
-    }
+    _updateBlinking();
   }
 
   @override
   void didUpdateWidget(covariant TimerDisplay oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateBlinking();
-  }
-
-  bool get _isZero {
-    return widget.timer.remainingSeconds == null ||
-        widget.timer.remainingSeconds! <= 0;
-  }
-
-  void _updateBlinking() {
-    if (_isZero && widget.showAnimations) {
-      if (!_blinkController.isAnimating) {
-        _blinkController.repeat(reverse: true);
-      }
-    } else if (_blinkController.isAnimating) {
-      _blinkController.stop();
-      _blinkController.value = 1.0;
-    }
   }
 
   @override
@@ -77,10 +61,54 @@ class _TimerDisplayState extends State<TimerDisplay>
     super.dispose();
   }
 
-  String _formatDuration(int? seconds) {
-    if (seconds == null || seconds <= 0) {
-      return '00:00';
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus && _editing) {
+      _saveInput();
     }
+  }
+
+  void _startEditing() {
+    setState(() {
+      _editing = true;
+      _controller.text = _formatDuration(widget.timer.remainingSeconds);
+      _focusNode.requestFocus();
+      _controller.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _controller.text.length,
+      );
+    });
+  }
+
+  void _saveInput() {
+    widget.onSetValue(_controller.text.trim());
+    setState(() => _editing = false);
+  }
+
+  bool get _isZero =>
+      widget.timer.remainingSeconds == null ||
+      widget.timer.remainingSeconds! <= timerMinSeconds;
+
+  bool get _isMax =>
+      widget.timer.remainingSeconds != null &&
+      widget.timer.remainingSeconds! >= timerMaxSeconds;
+
+  bool get _shouldBlink => _isZero && widget.showAnimations;
+
+  void _updateBlinking() {
+    if (_shouldBlink) {
+      if (!_blinkController.isAnimating) {
+        _blinkController.repeat(reverse: true);
+      }
+    } else {
+      if (_blinkController.isAnimating) {
+        _blinkController.stop();
+        _blinkController.value = 1.0;
+      }
+    }
+  }
+
+  String _formatDuration(int? seconds) {
+    if (seconds == null || seconds <= 0) return '00:00';
     final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
     final secs = (seconds % 60).toString().padLeft(2, '0');
     return '$minutes:$secs';
@@ -107,43 +135,8 @@ class _TimerDisplayState extends State<TimerDisplay>
         );
   }
 
-  void _startEditing() {
-    setState(() {
-      _editing = true;
-      final secs = widget.timer.remainingSeconds ?? 0;
-      final min = (secs ~/ 60).toString().padLeft(2, '0');
-      final sec = (secs % 60).toString().padLeft(2, '0');
-      _controller.text = "$min:$sec";
-      _focusNode.requestFocus();
-      _controller.selection = TextSelection(
-        baseOffset: 0,
-        extentOffset: _controller.text.length,
-      );
-    });
-  }
-
-  void _saveInput() {
-    final text = _controller.text.trim();
-    widget.onSetValue(text);
-    setState(() {
-      _editing = false;
-    });
-  }
-
-  // Timer boundaries as static constants
-  static const int timerMinSeconds = 0;
-  static const int timerMaxMinutes = 60; // Maximum of 60 minutes
-  static const int timerMaxSeconds =
-      timerMaxMinutes * Duration.secondsPerMinute;
-
   @override
   Widget build(BuildContext context) {
-    final isZero =
-        widget.timer.remainingSeconds == null ||
-        widget.timer.remainingSeconds! <= timerMinSeconds;
-    final isMax =
-        widget.timer.remainingSeconds != null &&
-        widget.timer.remainingSeconds! >= timerMaxSeconds;
     final screenWidth = MediaQuery.of(context).size.width;
     double iconSize = AppSizes.iconMedium;
     double spacing = AppSizes.spacingL;
@@ -157,18 +150,16 @@ class _TimerDisplayState extends State<TimerDisplay>
       spacing = 16;
       textFieldWidth = 100;
     }
+
     return Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Semantics(
+          _buildIconButton(
+            icon: Icons.remove_circle,
+            size: iconSize,
             label: 'Diminuir tempo',
-            button: true,
-            child: IconButton(
-              icon: Icon(Icons.remove_circle, size: iconSize),
-              onPressed: widget.isRunning || isZero ? null : widget.onDecrement,
-              tooltip: 'Diminuir tempo',
-            ),
+            onPressed: widget.isRunning || _isZero ? null : widget.onDecrement,
           ),
           SizedBox(width: spacing),
           Flexible(
@@ -176,7 +167,7 @@ class _TimerDisplayState extends State<TimerDisplay>
               animation: _blinkController,
               builder: (context, child) {
                 return Opacity(
-                  opacity: isZero
+                  opacity: _shouldBlink
                       ? (_blinkController.value < AppConstants.blinkThreshold
                             ? AppConstants.blinkMinOpacity
                             : 1.0)
@@ -213,16 +204,30 @@ class _TimerDisplayState extends State<TimerDisplay>
             ),
           ),
           SizedBox(width: spacing),
-          Semantics(
+          _buildIconButton(
+            icon: Icons.add_circle,
+            size: iconSize,
             label: 'Aumentar tempo',
-            button: true,
-            child: IconButton(
-              icon: Icon(Icons.add_circle, size: iconSize),
-              onPressed: widget.isRunning || isMax ? null : widget.onIncrement,
-              tooltip: 'Aumentar tempo',
-            ),
+            onPressed: widget.isRunning || _isMax ? null : widget.onIncrement,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildIconButton({
+    required IconData icon,
+    required double size,
+    required String label,
+    required VoidCallback? onPressed,
+  }) {
+    return Semantics(
+      label: label,
+      button: true,
+      child: IconButton(
+        icon: Icon(icon, size: size),
+        onPressed: onPressed,
+        tooltip: label,
       ),
     );
   }
