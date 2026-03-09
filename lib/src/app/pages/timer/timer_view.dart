@@ -70,8 +70,14 @@ class _TimerViewState extends State<TimerView> {
               ),
               child: FocusModeButton(
                 onPressed: () {
+                  final timerCubit = context.read<TimerCubit>();
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const FocusModePage()),
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: timerCubit,
+                        child: const FocusModePage(),
+                      ),
+                    ),
                   );
                 },
               ),

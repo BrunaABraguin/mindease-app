@@ -57,7 +57,7 @@ void main() {
     });
 
     test('toMap converts profile to map', () {
-      final date = DateTime(2025, 3, 1);
+      final date = DateTime(2025, 3);
       final profile = Profile(
         userEmail: 'u@t.com',
         strikeDays: 2,
@@ -91,7 +91,7 @@ void main() {
         totalTasks: 10,
         totalMissions: 3,
         completedMissions: ['new'],
-        lastCompletionDate: DateTime(2025, 6, 1),
+        lastCompletionDate: DateTime(2025, 6),
       );
       expect(copy.userEmail, 'a@b.com');
       expect(copy.strikeDays, 5);
@@ -99,7 +99,7 @@ void main() {
       expect(copy.totalTasks, 10);
       expect(copy.totalMissions, 3);
       expect(copy.completedMissions, ['new']);
-      expect(copy.lastCompletionDate, DateTime(2025, 6, 1));
+      expect(copy.lastCompletionDate, DateTime(2025, 6));
     });
 
     test('copyWith preserves unmodified fields', () {
@@ -135,7 +135,7 @@ void main() {
       });
 
       test('returns 0m for zero minutes', () {
-        const profile = Profile(userEmail: '', totalFocusMinutes: 0);
+        const profile = Profile(userEmail: '');
         expect(profile.formattedFocusTime, '0m');
       });
     });

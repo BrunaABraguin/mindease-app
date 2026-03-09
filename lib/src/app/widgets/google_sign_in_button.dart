@@ -41,15 +41,15 @@ class GoogleSignInButton extends StatelessWidget {
               children: [
                 Image.asset(
                   AppAssets.googleLogo,
-                  width: AppSizes.buttonMinWidthMedium,
-                  height: AppSizes.buttonMinWidthMedium,
+                  width: AppSizes.iconSmall,
+                  height: AppSizes.iconSmall,
                   errorBuilder: (_, _, _) =>
-                      const Icon(Icons.g_mobiledata, size: AppSizes.buttonMinWidthMedium),
+                      const Icon(Icons.g_mobiledata, size: AppSizes.iconSmall),
                 ),
                 const SizedBox(width: AppSizes.spacingS),
                 Expanded(
                   child: Text(
-                    'Entrar com Google',
+                    'Sincronizar com o Google',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
