@@ -12,10 +12,7 @@ import 'package:mindease_app/src/data/repositories/timer_repository.dart'
 ///
 /// Uses `NavigationBar` on mobile and `NavigationRail` on wider/web layouts.
 class AppNavigator extends StatefulWidget {
-  const AppNavigator({
-    super.key,
-    required this.timerRepository,
-  });
+  const AppNavigator({super.key, required this.timerRepository});
 
   /// The timer repository to use.
   final repo.TimerRepository timerRepository;
@@ -27,7 +24,6 @@ class AppNavigator extends StatefulWidget {
 /// State holder for the selected destination index.
 class _AppNavigatorState extends State<AppNavigator> {
   int _selectedIndex = 0;
-  final Map<int, Widget> _pageCache = <int, Widget>{};
 
   static const _destinations = <_AppDestination>[
     _AppDestination(
@@ -98,10 +94,10 @@ class _AppNavigatorState extends State<AppNavigator> {
                         .toList(growable: false),
                   ),
                 ),
-                Expanded(child: _buildPage(_selectedIndex)),
+                Expanded(child: _buildBody()),
               ],
             )
-          : _buildPage(_selectedIndex),
+          : _buildBody(),
       bottomNavigationBar: useRail
           ? null
           : DecoratedBox(
@@ -144,23 +140,37 @@ class _AppNavigatorState extends State<AppNavigator> {
     setState(() => _selectedIndex = index);
   }
 
+  final Map<int, Widget> _pageCache = <int, Widget>{};
+
+  /// Lazily builds and caches pages to avoid eagerly instantiating all of them.
+  /// Uses [IndexedStack] so that previously-visited pages stay mounted
+  /// (preserving running timers, scroll positions, etc.).
+  Widget _buildBody() {
+    _pageCache[_selectedIndex] ??= _buildPage(_selectedIndex);
+    return IndexedStack(
+      index: _selectedIndex,
+      children: List.generate(
+        _destinations.length,
+        (i) => _pageCache[i] ?? const SizedBox.shrink(),
+      ),
+    );
+  }
+
   Widget _buildPage(int index) {
-    return _pageCache.putIfAbsent(index, () {
-      switch (index) {
-        case 0:
-          return TimerPage(timerRepository: widget.timerRepository);
-        case 1:
-          return const HabitsPage();
-        case 2:
-          return const TasksPage();
-        case 3:
-          return const MissionsPage();
-        case 4:
-          return const ProfilePage();
-        default:
-          return TimerPage(timerRepository: widget.timerRepository);
-      }
-    });
+    switch (index) {
+      case 0:
+        return TimerPage(timerRepository: widget.timerRepository);
+      case 1:
+        return const HabitsPage();
+      case 2:
+        return const TasksPage();
+      case 3:
+        return const MissionsPage();
+      case 4:
+        return const ProfilePage();
+      default:
+        return TimerPage(timerRepository: widget.timerRepository);
+    }
   }
 
   String _ellipsizedLabel(String label) {

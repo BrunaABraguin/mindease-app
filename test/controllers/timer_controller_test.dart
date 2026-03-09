@@ -110,4 +110,92 @@ void main() {
     expect(cubit2.state.currentCycle, 2);
     expect(cubit2.state.remainingSeconds, 7);
   });
+
+  test(
+    'onFocusSessionCompleted is called with correct minutes after focus session',
+    () async {
+      int? savedMinutes;
+      final focusCubit = TimerCubit(
+        timerRepository: mockRepo,
+        tickDuration: const Duration(milliseconds: 1),
+        onFocusSessionCompleted: (minutes) async {
+          savedMinutes = minutes;
+        },
+      );
+
+      // Set a short focus duration (120 seconds = 2 minutes) for fast test
+      final initial = focusCubit.state.copyWith(
+        durations: const TimerDurations(
+          focus: 120,
+          shortBreak: 60,
+          longBreak: 180,
+        ),
+        remainingSeconds: 3,
+        currentModeIndex: TimerCubit.modeFocus,
+      );
+      focusCubit.emit(initial);
+
+      await focusCubit.startPauseTimer();
+
+      expect(savedMinutes, 2);
+      expect(focusCubit.state.currentCycle, 1);
+    },
+  );
+
+  test(
+    'overrideRemainingSeconds updates remaining without changing duration',
+    () {
+      cubit.overrideRemainingSeconds(600);
+      expect(cubit.state.remainingSeconds, 600);
+      expect(cubit.state.isRunning, false);
+      // Focus duration stays at the default 1500
+      expect(cubit.state.durations.focus, 1500);
+      expect(mockRepo.savedEntities.last.remainingSeconds, 600);
+      expect(mockRepo.savedEntities.last.durations.focus, 1500);
+    },
+  );
+
+  test('resetTimer uses original duration after overrideRemainingSeconds', () {
+    cubit.overrideRemainingSeconds(600);
+    expect(cubit.state.remainingSeconds, 600);
+
+    cubit.resetTimer();
+    // Should reset to the original focus duration, not the overridden value
+    expect(cubit.state.remainingSeconds, 1500);
+    expect(cubit.state.durations.focus, 1500);
+  });
+
+  test(
+    'overrideRemainingSeconds does not affect other mode durations',
+    () async {
+      await cubit.updateCurrentModeIndex(TimerCubit.modeShortBreak);
+      cubit.overrideRemainingSeconds(120);
+      expect(cubit.state.remainingSeconds, 120);
+      expect(cubit.state.durations.shortBreak, 300);
+      expect(cubit.state.durations.focus, 1500);
+      expect(cubit.state.durations.longBreak, 900);
+    },
+  );
+
+  test('onFocusSessionCompleted is not called for break sessions', () async {
+    int? savedMinutes;
+    final breakCubit = TimerCubit(
+      timerRepository: mockRepo,
+      tickDuration: const Duration(milliseconds: 1),
+      onFocusSessionCompleted: (minutes) async {
+        savedMinutes = minutes;
+      },
+    );
+
+    // Set to short break mode
+    final initial = breakCubit.state.copyWith(
+      remainingSeconds: 2,
+      currentModeIndex: TimerCubit.modeShortBreak,
+    );
+    breakCubit.emit(initial);
+
+    await breakCubit.startPauseTimer();
+
+    expect(savedMinutes, isNull);
+  });
 }

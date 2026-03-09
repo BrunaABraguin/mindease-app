@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
+import 'package:mindease_app/src/app/utils/time_formatter.dart';
 import 'package:mindease_app/src/domain/entities/timer_entity.dart';
 
 class TimerDisplay extends StatefulWidget {
@@ -27,9 +28,6 @@ class TimerDisplay extends StatefulWidget {
 class _TimerDisplayState extends State<TimerDisplay>
     with SingleTickerProviderStateMixin {
   static const int timerMinSeconds = 0;
-  static const int timerMaxMinutes = 60;
-  static const int timerMaxSeconds =
-      timerMaxMinutes * Duration.secondsPerMinute;
 
   bool _editing = false;
   final TextEditingController _controller = TextEditingController();
@@ -41,7 +39,9 @@ class _TimerDisplayState extends State<TimerDisplay>
     super.initState();
     _blinkController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(
+        milliseconds: AppConstants.blinkAnimationDurationMs,
+      ),
     );
     _focusNode.addListener(_onFocusChange);
     _updateBlinking();
@@ -70,7 +70,7 @@ class _TimerDisplayState extends State<TimerDisplay>
   void _startEditing() {
     setState(() {
       _editing = true;
-      _controller.text = _formatDuration(widget.timer.remainingSeconds);
+      _controller.text = formatDuration(widget.timer.remainingSeconds);
       _focusNode.requestFocus();
       _controller.selection = TextSelection(
         baseOffset: 0,
@@ -90,7 +90,7 @@ class _TimerDisplayState extends State<TimerDisplay>
 
   bool get _isMax =>
       widget.timer.remainingSeconds != null &&
-      widget.timer.remainingSeconds! >= timerMaxSeconds;
+      widget.timer.remainingSeconds! >= AppConstants.timerMaxSeconds;
 
   bool get _shouldBlink => _isZero && widget.showAnimations;
 
@@ -107,21 +107,14 @@ class _TimerDisplayState extends State<TimerDisplay>
     }
   }
 
-  String _formatDuration(int? seconds) {
-    if (seconds == null || seconds <= 0) return '00:00';
-    final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
-    final secs = (seconds % 60).toString().padLeft(2, '0');
-    return '$minutes:$secs';
-  }
-
   TextStyle _timerTextStyle(BuildContext context) {
     final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     double fontSize = AppSizes.timerFontSize;
     if (screenWidth < AppSizes.breakpointMobile) {
-      fontSize = 40;
+      fontSize = AppSizes.timerFontSizeMobile;
     } else if (screenWidth < AppSizes.breakpointTablet) {
-      fontSize = 60;
+      fontSize = AppSizes.timerFontSizeTablet;
     }
     return theme.textTheme.displayLarge?.copyWith(
           fontWeight: FontWeight.bold,
@@ -142,13 +135,13 @@ class _TimerDisplayState extends State<TimerDisplay>
     double spacing = AppSizes.spacingL;
     double textFieldWidth = AppSizes.buttonMinWidthMedium;
     if (screenWidth < AppSizes.breakpointMobile) {
-      iconSize = 32;
-      spacing = 8;
-      textFieldWidth = 80;
+      iconSize = AppSizes.timerIconSizeMobile;
+      spacing = AppSizes.spacingXs;
+      textFieldWidth = AppSizes.buttonMinWidthSmall;
     } else if (screenWidth < AppSizes.breakpointTablet) {
-      iconSize = 40;
-      spacing = 16;
-      textFieldWidth = 100;
+      iconSize = AppSizes.timerIconSizeTablet;
+      spacing = AppSizes.spacingM;
+      textFieldWidth = AppSizes.timerTextFieldWidthTablet;
     }
 
     return Center(
@@ -158,7 +151,7 @@ class _TimerDisplayState extends State<TimerDisplay>
           _buildIconButton(
             icon: Icons.remove_circle,
             size: iconSize,
-            label: 'Diminuir tempo',
+            label: AppStrings.decreaseTime,
             onPressed: widget.isRunning || _isZero ? null : widget.onDecrement,
           ),
           SizedBox(width: spacing),
@@ -195,7 +188,7 @@ class _TimerDisplayState extends State<TimerDisplay>
                             ),
                           )
                         : Text(
-                            _formatDuration(widget.timer.remainingSeconds),
+                            formatDuration(widget.timer.remainingSeconds),
                             style: _timerTextStyle(context),
                           ),
                   ),
@@ -207,7 +200,7 @@ class _TimerDisplayState extends State<TimerDisplay>
           _buildIconButton(
             icon: Icons.add_circle,
             size: iconSize,
-            label: 'Aumentar tempo',
+            label: AppStrings.increaseTime,
             onPressed: widget.isRunning || _isMax ? null : widget.onIncrement,
           ),
         ],

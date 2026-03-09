@@ -8,6 +8,7 @@ import 'package:mindease_app/src/data/repositories/timer_repository.dart'
 import 'package:mindease_app/theme.dart';
 
 import '../mocks/fake_auth_usecases.dart';
+import '../mocks/fake_profile_repository.dart';
 import '../repositories/fake_preferences_repository.dart';
 
 void main() {
@@ -27,6 +28,7 @@ void main() {
         home: BlocProvider<ProfileCubit>(
           create: (_) => ProfileCubit(
             preferencesRepository: FakePreferencesRepository(),
+            profileRepository: FakeProfileRepository(),
             getAuthState: FakeGetAuthStateUseCase(),
             signInWithGoogle: FakeSignInWithGoogleUseCase(),
             signOut: FakeSignOutUseCase(),
@@ -73,7 +75,7 @@ void main() {
 
     // Navigate to "Tarefas" and ensure selection and content change
     await tester.tap(find.text('Tarefas').first);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 2));
     // Verify that the TasksPage content is displayed
     expect(find.text('Tarefas'), findsWidgets);
     final tarefasNavigationBar = tester.widget<NavigationBar>(
@@ -83,7 +85,7 @@ void main() {
 
     // Navigate to "Missões" and ensure selection and content change again
     await tester.tap(find.text('Missões').first);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 2));
     expect(find.text('Missões'), findsWidgets);
     final missoesNavigationBar = tester.widget<NavigationBar>(
       find.byType(NavigationBar),

@@ -10,6 +10,7 @@ class AppTheme {
 
   static const Color green = Color(0xFF3BAB79);
   static const Color white = Color(0xFFF4F4F4);
+  static const Color focusModeForeground = Colors.white;
 
   static NavigationBarThemeData navigationBarTheme({
     required Color backgroundColor,

@@ -67,4 +67,23 @@ class AppSizes {
   static const double cycleFontSize = 20.0;
   static const double timerFontSize = 80.0;
   static const double navFontSize = 14.0;
+
+  // Avatar
+  static const double avatarRadiusLarge = 32.0;
+  static const double avatarIconSize = 40.0;
+
+  // Cycle completed
+  static const double cycleCompletedMaxWidth = 320.0;
+
+  // Timer responsive
+  static const double timerFontSizeMobile = 40.0;
+  static const double timerFontSizeTablet = 60.0;
+  static const double timerIconSizeMobile = 32.0;
+  static const double timerIconSizeTablet = 40.0;
+  static const double timerTextFieldWidthTablet = 100.0;
+
+  // Focus mode
+  static const double focusModeLetterSpacing = 2.0;
+  static const double focusModeProgressWidthFactor = 0.6;
+  static const double elevationNone = 0.0;
 }

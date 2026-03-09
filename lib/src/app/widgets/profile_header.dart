@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_app/src/app/utils/app_constants.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key, this.photoUrl, this.displayName, this.email});
@@ -10,28 +11,28 @@ class ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSizes.paddingM),
       child: Row(
         children: [
           CircleAvatar(
-            radius: 32,
+            radius: AppSizes.avatarRadiusLarge,
             backgroundImage: photoUrl != null && photoUrl!.isNotEmpty
                 ? NetworkImage(photoUrl!)
                 : null,
             child: (photoUrl == null || photoUrl!.isEmpty)
                 ? Icon(
                     Icons.person,
-                    size: 40,
+                    size: AppSizes.avatarIconSize,
                     color: theme.colorScheme.onSurface,
                   )
                 : null,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AppSizes.spacingM),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                displayName ?? 'Usuário',
+                displayName ?? AppStrings.defaultUserName,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

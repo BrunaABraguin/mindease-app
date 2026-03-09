@@ -17,11 +17,17 @@ class GoogleSignInButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: isLoading ? null : onPressed,
       style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.paddingM,
+          vertical: AppSizes.paddingS,
+        ),
         side: BorderSide(
           color: colorScheme.outline.withValues(alpha: AppSizes.opacityHeavy),
         ),
         backgroundColor: colorScheme.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.spacingS),
+        ),
       ),
       child: isLoading
           ? const SizedBox(
@@ -31,24 +37,26 @@ class GoogleSignInButton extends StatelessWidget {
             )
           : Row(
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
                   AppAssets.googleLogo,
                   width: AppSizes.buttonMinWidthMedium,
-                  height: AppSizes.buttonHeightMedium,
+                  height: AppSizes.buttonMinWidthMedium,
                   errorBuilder: (_, _, _) =>
-                      const Icon(Icons.g_mobiledata, size: AppSizes.iconMedium),
+                      const Icon(Icons.g_mobiledata, size: AppSizes.buttonMinWidthMedium),
                 ),
-                const SizedBox(width: AppSizes.spacingXl),
+                const SizedBox(width: AppSizes.spacingS),
                 Expanded(
                   child: Text(
                     'Entrar com Google',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: AppSizes.timerFontSize,
+                      fontSize: AppSizes.navFontSize,
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

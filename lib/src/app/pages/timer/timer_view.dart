@@ -30,7 +30,12 @@ class _TimerPageState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => TimerCubit(timerRepository: widget.timerRepository),
+      create: (ctx) => TimerCubit(
+        timerRepository: widget.timerRepository,
+        onFocusSessionCompleted: (minutes) async {
+          ctx.read<ProfileCubit>().addFocusMinutes(minutes);
+        },
+      ),
       child: const TimerView(),
     );
   }
