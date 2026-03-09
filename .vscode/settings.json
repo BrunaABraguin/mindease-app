@@ -2,5 +2,8 @@
     "sonarlint.connectedMode.project": {
         "connectionId": "brunaabraguin",
         "projectKey": "BrunaABraguin_mindease-app"
+    },
+    "chat.tools.terminal.autoApprove": {
+        "flutter": true
     }
 }

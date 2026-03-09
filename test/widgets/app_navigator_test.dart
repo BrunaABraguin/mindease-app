@@ -7,8 +7,8 @@ import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
 import 'package:mindease_app/theme.dart';
 
+import '../mocks/fake_auth_usecases.dart';
 import '../repositories/fake_preferences_repository.dart';
-
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +25,12 @@ void main() {
       MaterialApp(
         theme: AppTheme.lightTheme,
         home: BlocProvider<ProfileCubit>(
-          create: (_) => ProfileCubit(preferencesRepository: FakePreferencesRepository()),
+          create: (_) => ProfileCubit(
+            preferencesRepository: FakePreferencesRepository(),
+            getAuthState: FakeGetAuthStateUseCase(),
+            signInWithGoogle: FakeSignInWithGoogleUseCase(),
+            signOut: FakeSignOutUseCase(),
+          ),
           child: AppNavigator(timerRepository: repo.TimerRepository()),
         ),
       ),

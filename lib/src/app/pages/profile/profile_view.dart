@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
+import 'package:mindease_app/src/app/widgets/google_sign_in_button.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
+import 'package:mindease_app/src/app/widgets/profile_header.dart';
+import 'package:mindease_app/src/app/widgets/sign_out_button.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -27,10 +29,27 @@ class _ProfileViewState extends State<ProfileView> {
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
           final preferences = state.preferences;
-          return Center(
+          final user = state.user;
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 32),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                if (user != null) ...[
+                  ProfileHeader(
+                    photoUrl: user.photoURL,
+                    displayName: user.displayName,
+                    email: user.email,
+                  ),
+                  const SizedBox(height: 16),
+                  SignOutButton(
+                    onPressed: () => context.read<ProfileCubit>().signOut(),
+                  ),
+                ] else ...[
+                  GoogleSignInButton(
+                    onPressed: () =>
+                        context.read<ProfileCubit>().signInWithGoogle(),
+                  ),
+                ],
                 const SizedBox(height: 32),
                 Container(
                   padding: const EdgeInsets.all(16),

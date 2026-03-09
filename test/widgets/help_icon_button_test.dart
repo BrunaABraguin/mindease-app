@@ -5,6 +5,7 @@ import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
 import 'package:mindease_app/src/app/utils/help_texts.dart';
 import 'package:mindease_app/src/app/widgets/help_icon_button.dart';
 
+import '../mocks/fake_auth_usecases.dart';
 import '../repositories/fake_preferences_repository.dart';
 
 void main() {
@@ -14,7 +15,12 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: BlocProvider<ProfileCubit>(
-          create: (_) => ProfileCubit(preferencesRepository: FakePreferencesRepository()),
+          create: (_) => ProfileCubit(
+            preferencesRepository: FakePreferencesRepository(),
+            getAuthState: FakeGetAuthStateUseCase(),
+            signInWithGoogle: FakeSignInWithGoogleUseCase(),
+            signOut: FakeSignOutUseCase(),
+          ),
           child: const Scaffold(
             body: HelpIconButton(
               title: HelpTexts.focusModeTitle,

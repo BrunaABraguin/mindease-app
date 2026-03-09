@@ -1,20 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
-import 'package:mindease_app/src/data/repositories/preferences_repository.dart';
 import 'package:mindease_app/src/domain/entities/preferences.dart';
 
-class MockPreferencesRepository extends PreferencesRepository {
-  Preferences? _saved;
-  @override
-  Future<void> savePreferences(Preferences preferences) async {
-    _saved = preferences;
-  }
-
-  @override
-  Future<Preferences> loadPreferences() async {
-    return _saved ?? Preferences.defaultValues();
-  }
-}
+import '../mocks/fake_auth_usecases.dart';
+import '../mocks/mock_preferences_repository.dart';
 
 void main() {
   group('ProfileCubit', () {
@@ -22,7 +11,12 @@ void main() {
     late ProfileCubit cubit;
     setUp(() {
       repo = MockPreferencesRepository();
-      cubit = ProfileCubit(preferencesRepository: repo);
+      cubit = ProfileCubit(
+        preferencesRepository: repo,
+        getAuthState: FakeGetAuthStateUseCase(),
+        signInWithGoogle: FakeSignInWithGoogleUseCase(),
+        signOut: FakeSignOutUseCase(),
+      );
     });
 
     test('initial state loads preferences', () async {

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mindease_app/firebase_options.dart';
+import 'package:mindease_app/src/data/di/auth_di.dart';
 import 'package:mindease_app/src/app/navigator.dart';
 import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
 import 'package:mindease_app/src/data/repositories/preferences_repository.dart';
@@ -77,8 +78,12 @@ class Mindease extends StatelessWidget {
         RepositoryProvider.value(value: timerRepository),
       ],
       child: BlocProvider<ProfileCubit>(
-        create: (_) =>
-            ProfileCubit(preferencesRepository: preferencesRepository),
+        create: (_) => ProfileCubit(
+          preferencesRepository: preferencesRepository,
+          getAuthState: getAuthStateUseCase,
+          signInWithGoogle: signInWithGoogleUseCase,
+          signOut: signOutUseCase,
+        ),
         child: const AppView(),
       ),
     );
