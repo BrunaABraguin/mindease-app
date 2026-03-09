@@ -18,7 +18,7 @@ class ProfileCubit extends Cubit<ProfileState> {
        _signInWithGoogle = signInWithGoogle,
        _signOut = signOut,
        super(
-         ProfileState(preferences: Preferences.defaultValues(), user: null),
+         ProfileState(preferences: Preferences.defaultValues()),
        ) {
     _loadPreferences();
     _listenAuth();

@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mindease_app/firebase_options.dart';
-import 'package:mindease_app/src/data/di/auth_di.dart';
 import 'package:mindease_app/src/app/navigator.dart';
 import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
+import 'package:mindease_app/src/data/di/auth_di.dart';
 import 'package:mindease_app/src/data/repositories/preferences_repository.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;

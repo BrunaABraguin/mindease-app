@@ -12,7 +12,7 @@ void main() {
     });
 
     test('save and load preferences', () async {
-      final prefs = Preferences(
+      const prefs = Preferences(
         showHelpIcons: false,
         showAnimations: true,
         darkTheme: true,

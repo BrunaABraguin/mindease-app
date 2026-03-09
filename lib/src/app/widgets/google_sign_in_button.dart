@@ -36,7 +36,7 @@ class GoogleSignInButton extends StatelessWidget {
                   AppAssets.googleLogo,
                   width: AppSizes.buttonMinWidthMedium,
                   height: AppSizes.buttonHeightMedium,
-                  errorBuilder: (_, __, ___) =>
+                  errorBuilder: (_, _, _) =>
                       const Icon(Icons.g_mobiledata, size: AppSizes.iconMedium),
                 ),
                 const SizedBox(width: AppSizes.spacingXl),

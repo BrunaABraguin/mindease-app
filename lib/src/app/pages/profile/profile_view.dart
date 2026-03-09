@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
-import 'package:mindease_app/src/app/widgets/google_sign_in_button.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
+import 'package:mindease_app/src/app/widgets/google_sign_in_button.dart';
 import 'package:mindease_app/src/app/widgets/profile_header.dart';
 import 'package:mindease_app/src/app/widgets/sign_out_button.dart';
 
