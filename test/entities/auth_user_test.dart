@@ -59,5 +59,32 @@ void main() {
       const b = AuthUser(uid: '1', email: 'c@d.com');
       expect(a, isNot(equals(b)));
     });
+
+    test('equality passes through all fields (non-const)', () {
+      // Non-const to avoid identical() short-circuit
+      // ignore: prefer_const_constructors
+      final a = AuthUser(
+        uid: '1',
+        email: 'a@b.com',
+        displayName: 'A',
+        photoURL: 'url',
+      );
+      // ignore: prefer_const_constructors
+      final b = AuthUser(
+        uid: '1',
+        email: 'a@b.com',
+        displayName: 'A',
+        photoURL: 'url',
+      );
+      expect(a == b, isTrue);
+    });
+
+    test('inequality with same uid different displayName', () {
+      // ignore: prefer_const_constructors
+      final a = AuthUser(uid: '1', email: 'a@b.com', displayName: 'A');
+      // ignore: prefer_const_constructors
+      final b = AuthUser(uid: '1', email: 'a@b.com', displayName: 'B');
+      expect(a == b, isFalse);
+    });
   });
 }
