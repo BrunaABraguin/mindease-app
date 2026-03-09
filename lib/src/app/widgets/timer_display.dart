@@ -53,19 +53,19 @@ class _TimerDisplayState extends State<TimerDisplay>
     _updateBlinking();
   }
 
-  void _updateBlinking() {
-    final isZero =
-        widget.timer.remainingSeconds == null ||
+  bool get _isZero {
+    return widget.timer.remainingSeconds == null ||
         widget.timer.remainingSeconds! <= 0;
-    if (isZero && widget.showAnimations) {
+  }
+
+  void _updateBlinking() {
+    if (_isZero && widget.showAnimations) {
       if (!_blinkController.isAnimating) {
         _blinkController.repeat(reverse: true);
       }
-    } else {
-      if (_blinkController.isAnimating) {
-        _blinkController.stop();
-        _blinkController.value = 1.0;
-      }
+    } else if (_blinkController.isAnimating) {
+      _blinkController.stop();
+      _blinkController.value = 1.0;
     }
   }
 
