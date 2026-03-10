@@ -31,7 +31,15 @@
 
 Essas instruções garantem consistência, manutenibilidade e qualidade no projeto. Siga sempre antes de submeter PRs ou novas features.
 
-## 6. Textos e Mensagens
+## 6. Material Design
+
+* Utilize ao máximo os widgets e componentes do Material Design 3 (M3) do Flutter.
+* Prefira widgets nativos como `Card`, `FilledButton`, `OutlinedButton`, `IconButton`, `ListTile`, `NavigationBar`, `Chip`, `Badge`, etc., em vez de construir layouts customizados com `Container` e `BoxDecoration`.
+* Use `Theme.of(context).colorScheme` e `Theme.of(context).textTheme` para cores e tipografia, em vez de valores manuais.
+* Sempre que possível, utilize tokens do Material Design (`surfaceContainerLow`, `onSurfaceVariant`, `labelLarge`, etc.) para garantir consistência visual e suporte a temas claro/escuro.
+* Evite reconstruir componentes que já existem no Material Design — aproveite elevação, shapes e estados interativos nativos.
+
+## 7. Textos e Mensagens
 
 * Nunca escreva textos literais (hard coded) diretamente em widgets, componentes ou páginas.
 * Sempre defina textos de interface, mensagens de ajuda, tooltips, títulos, descrições e mensagens amigáveis em arquivos de constantes, como `help_texts.dart` ou arquivos similares.

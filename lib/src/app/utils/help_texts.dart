@@ -15,4 +15,12 @@ class HelpTexts {
 
   static const String cyclesCompletedMessage =
       'Parabéns! Você completou todos os ciclos 🎉 Faça uma pausa e recarregue suas energias!';
+
+  static const String habitsTitle = 'Hábitos';
+  static const String habitsDescription =
+      'Acompanhe seus hábitos diários marcando os dias da semana em que você os realizou. Adicione novos hábitos, edite ou exclua conforme necessário.';
+
+  static const String addHabitTitle = 'Adicionar hábito';
+  static const String addHabitDescription =
+      'Clique no botão para adicionar um novo hábito. Digite o nome e confirme para salvar.';
 }

@@ -61,7 +61,7 @@ void main() {
           totalTasks: 5,
           totalMissions: 2,
           completedMissions: const ['m1', 'm2'],
-          lastCompletionDate: DateTime(2025, 6, 1),
+          lastCompletionDate: DateTime(2025, 6),
         );
 
         await repository.saveProfile(profile);

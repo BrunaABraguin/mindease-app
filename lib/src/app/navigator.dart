@@ -7,15 +7,23 @@ import 'package:mindease_app/src/app/pages/timer/timer_view.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
+import 'package:mindease_app/src/domain/repositories/habit_repository.dart';
 
 /// Main adaptive navigation shell for the app.
 ///
 /// Uses `NavigationBar` on mobile and `NavigationRail` on wider/web layouts.
 class AppNavigator extends StatefulWidget {
-  const AppNavigator({super.key, required this.timerRepository});
+  const AppNavigator({
+    super.key,
+    required this.timerRepository,
+    required this.habitRepository,
+  });
 
   /// The timer repository to use.
   final repo.TimerRepository timerRepository;
+
+  /// The habit repository to use.
+  final HabitRepository habitRepository;
 
   @override
   State<AppNavigator> createState() => _AppNavigatorState();
@@ -161,7 +169,7 @@ class _AppNavigatorState extends State<AppNavigator> {
       case 0:
         return TimerPage(timerRepository: widget.timerRepository);
       case 1:
-        return const HabitsPage();
+        return HabitsPage(habitRepository: widget.habitRepository);
       case 2:
         return const TasksPage();
       case 3:

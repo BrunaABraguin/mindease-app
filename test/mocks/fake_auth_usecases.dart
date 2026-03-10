@@ -15,8 +15,25 @@ class FakeAuthRepository implements AuthRepository {
   Future<void> signOut() async {}
 }
 
+class LoggedInFakeAuthRepository implements AuthRepository {
+  @override
+  AuthUser? get currentUser =>
+      const AuthUser(uid: 'test-uid', email: 'test@test.com');
+  @override
+  Stream<AuthUser?> get authStateChanges =>
+      Stream.value(const AuthUser(uid: 'test-uid', email: 'test@test.com'));
+  @override
+  Future<AuthUser?> signInWithGoogle() async => currentUser;
+  @override
+  Future<void> signOut() async {}
+}
+
 class FakeGetAuthStateUseCase extends GetAuthStateUseCase {
   FakeGetAuthStateUseCase() : super(FakeAuthRepository());
+}
+
+class LoggedInFakeGetAuthStateUseCase extends GetAuthStateUseCase {
+  LoggedInFakeGetAuthStateUseCase() : super(LoggedInFakeAuthRepository());
 }
 
 class FakeSignInWithGoogleUseCase extends SignInWithGoogleUseCase {

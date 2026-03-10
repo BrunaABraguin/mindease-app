@@ -14,6 +14,7 @@ class TimerCubit extends Cubit<TimerEntity> {
            durations: TimerDurations.defaults,
            currentCycle: 0,
            totalCycles: 4,
+           remainingSeconds: TimerDurations.defaultFocus,
            completedSessions: 0,
            currentModeIndex: 0,
          ),
@@ -225,7 +226,14 @@ class TimerCubit extends Cubit<TimerEntity> {
             ? durations.longBreak
             : TimerDurations.defaultLongBreak,
       );
-      emit(loaded.copyWith(durations: corrected));
+      var correctedState = loaded.copyWith(durations: corrected);
+      if (!correctedState.isRunning &&
+          (correctedState.remainingSeconds == null ||
+              correctedState.remainingSeconds == 0)) {
+        final total = getTotalSeconds(timer: correctedState);
+        correctedState = correctedState.copyWith(remainingSeconds: total);
+      }
+      emit(correctedState);
     }
   }
 

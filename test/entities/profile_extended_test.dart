@@ -11,7 +11,6 @@ void main() {
         totalTasks: 2,
         totalMissions: 1,
         completedMissions: ['m1'],
-        lastCompletionDate: null,
       );
       final copy = profile.copyWith(userEmail: 'new@b.com');
       expect(copy.userEmail, 'new@b.com');
@@ -71,7 +70,7 @@ void main() {
     test('equality with different lastCompletionDate', () {
       final a = Profile(
         userEmail: 'a@b.com',
-        lastCompletionDate: DateTime(2025, 1, 1),
+        lastCompletionDate: DateTime(2025),
       );
       final b = Profile(
         userEmail: 'a@b.com',
