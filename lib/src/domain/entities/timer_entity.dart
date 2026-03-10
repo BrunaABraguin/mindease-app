@@ -44,6 +44,35 @@ class TimerDurations {
       'TimerDurations(focus: $focus, shortBreak: $shortBreak, longBreak: $longBreak)';
 }
 
+class TimerStatus {
+  const TimerStatus({this.isRunning = false, this.isLoading = false});
+
+  final bool isRunning;
+  final bool isLoading;
+
+  TimerStatus copyWith({bool? isRunning, bool? isLoading}) {
+    return TimerStatus(
+      isRunning: isRunning ?? this.isRunning,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TimerStatus &&
+          runtimeType == other.runtimeType &&
+          isRunning == other.isRunning &&
+          isLoading == other.isLoading;
+
+  @override
+  int get hashCode => isRunning.hashCode ^ isLoading.hashCode;
+
+  @override
+  String toString() =>
+      'TimerStatus(isRunning: $isRunning, isLoading: $isLoading)';
+}
+
 class TimerEntity {
   TimerEntity({
     required this.durations,
@@ -52,8 +81,7 @@ class TimerEntity {
     this.remainingSeconds,
     required this.completedSessions,
     required this.currentModeIndex,
-    this.isRunning = false,
-    this.isLoading = false,
+    this.status = const TimerStatus(),
   });
 
   final TimerDurations durations;
@@ -62,8 +90,10 @@ class TimerEntity {
   final int? remainingSeconds;
   final int completedSessions;
   final int currentModeIndex;
-  final bool isRunning;
-  final bool isLoading;
+  final TimerStatus status;
+
+  bool get isRunning => status.isRunning;
+  bool get isLoading => status.isLoading;
 
   TimerEntity copyWith({
     TimerDurations? durations,
@@ -85,8 +115,10 @@ class TimerEntity {
           : remainingSeconds as int?,
       completedSessions: completedSessions ?? this.completedSessions,
       currentModeIndex: currentModeIndex ?? this.currentModeIndex,
-      isRunning: isRunning ?? this.isRunning,
-      isLoading: isLoading ?? this.isLoading,
+      status: TimerStatus(
+        isRunning: isRunning ?? this.isRunning,
+        isLoading: isLoading ?? this.isLoading,
+      ),
     );
   }
 
@@ -108,7 +140,7 @@ class TimerEntity {
           remainingSeconds == other.remainingSeconds &&
           completedSessions == other.completedSessions &&
           currentModeIndex == other.currentModeIndex &&
-          isRunning == other.isRunning;
+          status == other.status;
 
   @override
   int get hashCode =>
@@ -118,5 +150,5 @@ class TimerEntity {
       (remainingSeconds?.hashCode ?? 0) ^
       completedSessions.hashCode ^
       currentModeIndex.hashCode ^
-      isRunning.hashCode;
+      status.hashCode;
 }

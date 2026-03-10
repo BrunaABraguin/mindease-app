@@ -44,7 +44,7 @@ void main() {
               onCancel: onCancel ?? () {},
               onComplete: onComplete ?? (_) {},
               onDelete: onDelete ?? (_) {},
-              onEditName: onEditName ?? (_, __) {},
+              onEditName: onEditName ?? (_, _) {},
               editingTaskId: editingTaskId,
               onStartEditing: onStartEditing ?? (_) {},
               onCancelEditing: onCancelEditing ?? () {},
