@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mindease_app/src/app/utils/mission_checker.dart';
 import 'package:mindease_app/src/data/repositories/preferences_repository.dart';
 import 'package:mindease_app/src/domain/entities/auth_user.dart';
 import 'package:mindease_app/src/domain/entities/preferences.dart';
@@ -71,6 +72,9 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> signInWithGoogle() async {
     final user = await _signInWithGoogle.buildUseCaseFuture(null);
     emit(state.copyWith(user: user));
+    if (user != null) {
+      await tryCompleteMission('profile_login');
+    }
   }
 
   Future<void> signOut() async {
@@ -87,6 +91,9 @@ class ProfileCubit extends Cubit<ProfileState> {
     final updated = state.preferences.copyWith(darkTheme: value);
     await _repo.savePreferences(updated);
     emit(state.copyWith(preferences: updated));
+    if (value) {
+      await tryCompleteMission('profile_dark_theme');
+    }
   }
 
   Future<void> setShowHelpIcon(bool value) async {
@@ -107,6 +114,23 @@ class ProfileCubit extends Cubit<ProfileState> {
     await _profileRepo.incrementFocusMinutes(profile.userEmail, minutes);
     await _profileRepo.updateStreak(
       profile.userEmail,
+      profile.lastCompletionDate,
+    );
+    await tryCompleteMission('timer_first_session');
+    if (profile.totalFocusMinutes < 30 &&
+        profile.totalFocusMinutes + minutes >= 30) {
+      await tryCompleteMission('timer_30_min');
+    }
+  }
+
+  /// Completes a mission if it is valid and not yet completed.
+  Future<void> tryCompleteMission(String missionId) async {
+    final profile = state.profile;
+    if (profile == null) return;
+    if (!MissionChecker.shouldComplete(profile, missionId)) return;
+    await _profileRepo.completeMission(
+      profile.userEmail,
+      missionId,
       profile.lastCompletionDate,
     );
   }

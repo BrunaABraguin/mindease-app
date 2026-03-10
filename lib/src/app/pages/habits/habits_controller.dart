@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mindease_app/src/app/utils/mission_checker.dart';
 import 'package:mindease_app/src/domain/entities/habit.dart';
 import 'package:mindease_app/src/domain/repositories/habit_repository.dart';
 
@@ -9,6 +10,7 @@ class HabitsCubit extends Cubit<HabitsState> {
   HabitsCubit({
     required HabitRepository habitRepository,
     required String? userEmail,
+    this.onMissionTriggered,
   }) : _habitRepository = habitRepository,
        _userEmail = userEmail,
        super(const HabitsState()) {
@@ -25,6 +27,7 @@ class HabitsCubit extends Cubit<HabitsState> {
   final HabitRepository _habitRepository;
   String? _userEmail;
   StreamSubscription<List<Habit>>? _habitsSubscription;
+  final Future<void> Function(String missionId)? onMissionTriggered;
 
   bool get _hasValidEmail => _userEmail != null && _userEmail!.isNotEmpty;
 
@@ -76,6 +79,7 @@ class HabitsCubit extends Cubit<HabitsState> {
     final habit = Habit(id: '', userEmail: _userEmail!, name: name.trim());
     await _habitRepository.addHabit(habit);
     emit(state.copyWith(isAdding: false));
+    await onMissionTriggered?.call('habits_create_first');
   }
 
   Future<void> updateHabitName(String habitId, String newName) async {
@@ -97,7 +101,21 @@ class HabitsCubit extends Cubit<HabitsState> {
   }
 
   Future<void> toggleRecord(String habitId, DateTime date) async {
+    final habit = state.habits.firstWhere(
+      (h) => h.id == habitId,
+      orElse: () => const Habit(id: '', userEmail: '', name: ''),
+    );
+    final isCompleting = habit.id.isNotEmpty && !habit.hasRecordOn(date);
+
     await _habitRepository.toggleRecord(habitId, date);
+
+    if (isCompleting) {
+      await onMissionTriggered?.call('habits_complete_one');
+      final updatedRecords = [...habit.records, date];
+      if (MissionChecker.hasStreak(updatedRecords, 3)) {
+        await onMissionTriggered?.call('habits_streak_3');
+      }
+    }
   }
 
   void startAdding() {

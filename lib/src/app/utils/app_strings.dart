@@ -41,4 +41,10 @@ class AppStrings {
   // Actions
   static const String start = 'Iniciar';
   static const String pause = 'Pausar';
+
+  // Missions
+  static String missionsProgress(int completed, int total) =>
+      '$completed / $total concluídas';
+  static const String missionsLoginMessage =
+      'Faça login com o Google para\nadicionar e gerenciar suas missões.';
 }

@@ -9,6 +9,7 @@ class TimerCubit extends Cubit<TimerEntity> {
     required this.timerRepository,
     this.tickDuration = defaultTickDuration,
     this.onFocusSessionCompleted,
+    this.onMissionTriggered,
   }) : super(
          TimerEntity(
            durations: TimerDurations.defaults,
@@ -43,6 +44,7 @@ class TimerCubit extends Cubit<TimerEntity> {
 
   final Duration tickDuration;
   final Future<void> Function(int focusMinutes)? onFocusSessionCompleted;
+  final Future<void> Function(String missionId)? onMissionTriggered;
   void resetTimer() {
     final int total = getTotalSeconds();
     final updatedState = state.copyWith(
@@ -95,21 +97,25 @@ class TimerCubit extends Cubit<TimerEntity> {
     await timerRepository.saveTimerEntity(stoppedState);
 
     // Só incrementa currentCycle se terminou normalmente
-    if (completedNormally) {
-      // Se for pausa (shortBreak ou longBreak), zera o currentCycle
-      if (state.currentModeIndex == modeShortBreak ||
-          state.currentModeIndex == modeLongBreak) {
-        final updatedState = state.copyWith(currentCycle: 0);
-        emit(updatedState);
-        await timerRepository.saveTimerEntity(updatedState);
-      } else if (state.currentCycle < state.totalCycles) {
-        final focusMinutes = state.durations.focus ~/ Duration.secondsPerMinute;
-        await onFocusSessionCompleted?.call(focusMinutes);
+    if (!completedNormally) return;
 
-        final incrementedCycle = state.currentCycle + 1;
-        final updatedState = state.copyWith(currentCycle: incrementedCycle);
-        emit(updatedState);
-        await timerRepository.saveTimerEntity(updatedState);
+    // Se for pausa (shortBreak ou longBreak), zera o currentCycle
+    if (state.currentModeIndex == modeShortBreak ||
+        state.currentModeIndex == modeLongBreak) {
+      final updatedState = state.copyWith(currentCycle: 0);
+      emit(updatedState);
+      await timerRepository.saveTimerEntity(updatedState);
+    } else if (state.currentCycle < state.totalCycles) {
+      final focusMinutes = state.durations.focus ~/ Duration.secondsPerMinute;
+      await onFocusSessionCompleted?.call(focusMinutes);
+
+      final incrementedCycle = state.currentCycle + 1;
+      final updatedState = state.copyWith(currentCycle: incrementedCycle);
+      emit(updatedState);
+      await timerRepository.saveTimerEntity(updatedState);
+
+      if (incrementedCycle >= state.totalCycles) {
+        await onMissionTriggered?.call('timer_long_break');
       }
     }
     // Timer terminou, pode adicionar lógica extra aqui se quiser

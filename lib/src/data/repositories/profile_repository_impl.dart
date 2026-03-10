@@ -62,4 +62,17 @@ class ProfileRepositoryImpl implements ProfileRepository {
       return Profile.fromMap(doc.data()!);
     });
   }
+
+  @override
+  Future<void> completeMission(
+    String userEmail,
+    String missionId,
+    DateTime? lastCompletionDate,
+  ) async {
+    await _collection.doc(userEmail).set({
+      'totalMissions': FieldValue.increment(1),
+      'completedMissions': FieldValue.arrayUnion([missionId]),
+    }, SetOptions(merge: true));
+    await updateStreak(userEmail, lastCompletionDate);
+  }
 }

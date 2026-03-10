@@ -48,4 +48,18 @@ class FakeProfileRepository implements ProfileRepository {
   Stream<Profile?> profileStream(String userEmail) {
     return Stream.value(_profile);
   }
+
+  @override
+  Future<void> completeMission(
+    String userEmail,
+    String missionId,
+    DateTime? lastCompletionDate,
+  ) async {
+    final current = _profile ?? Profile(userEmail: userEmail);
+    _profile = current.copyWith(
+      totalMissions: current.totalMissions + 1,
+      completedMissions: [...current.completedMissions, missionId],
+    );
+    await updateStreak(userEmail, lastCompletionDate);
+  }
 }

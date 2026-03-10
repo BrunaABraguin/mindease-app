@@ -23,8 +23,13 @@ class HabitsPage extends StatelessWidget {
       (cubit) => cubit.state.user?.email,
     );
     return BlocProvider(
-      create: (_) =>
-          HabitsCubit(habitRepository: habitRepository, userEmail: userEmail),
+      create: (ctx) => HabitsCubit(
+        habitRepository: habitRepository,
+        userEmail: userEmail,
+        onMissionTriggered: (missionId) async {
+          ctx.read<ProfileCubit>().tryCompleteMission(missionId);
+        },
+      ),
       child: const HabitsView(),
     );
   }
@@ -61,8 +66,8 @@ class HabitsView extends StatelessWidget {
                 child: isLoggedIn
                     ? ListView(
                         padding: const EdgeInsets.symmetric(
-                          vertical: AppSizes.paddingL,
-                          horizontal: AppSizes.paddingM,
+                          vertical: AppSizes.paddingXl,
+                          horizontal: AppSizes.paddingL,
                         ),
                         children: [
                           DateHeader(
@@ -109,7 +114,7 @@ class HabitsView extends StatelessWidget {
                     : const Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingM,
+                            horizontal: AppSizes.paddingL,
                           ),
                           child: LoginRequiredMessage(
                             message:

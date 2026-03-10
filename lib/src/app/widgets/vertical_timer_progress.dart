@@ -32,7 +32,7 @@ class VerticalTimerProgress extends StatelessWidget {
       margin: EdgeInsets.only(bottom: bottomMargin),
       child: LinearProgressIndicator(
         value: progress,
-        backgroundColor: lineColor.withValues(alpha: AppSizes.opacityHeavy),
+        backgroundColor: lineColor.withValues(alpha: AppOpacity.heavy),
         valueColor: AlwaysStoppedAnimation<Color>(lineColor),
         minHeight: height,
         borderRadius: BorderRadius.circular(height / 2),

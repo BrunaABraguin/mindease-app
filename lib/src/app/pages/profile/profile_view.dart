@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
+import 'package:mindease_app/src/app/pages/profile/widgets/profile_statistics_section.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/app/widgets/google_sign_in_button.dart';
 import 'package:mindease_app/src/app/widgets/profile_header.dart';
 import 'package:mindease_app/src/app/widgets/profile_settings_section.dart';
-import 'package:mindease_app/src/app/widgets/profile_statistics_section.dart';
 import 'package:mindease_app/src/app/widgets/sign_out_button.dart';
 import 'package:mindease_app/src/domain/entities/profile.dart';
 
@@ -42,7 +42,7 @@ class _ProfileViewState extends State<ProfileView> {
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
               vertical: AppSizes.paddingXl,
-              horizontal: AppSizes.paddingM,
+              horizontal: AppSizes.paddingL,
             ),
             child: Center(
               child: ConstrainedBox(

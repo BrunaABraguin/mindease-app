@@ -43,12 +43,12 @@ void main() {
     });
 
     test('opacity valores devem estar entre 0 e 1', () {
-      expect(AppSizes.opacityLight, greaterThan(0));
-      expect(AppSizes.opacityLight, lessThanOrEqualTo(1));
-      expect(AppSizes.opacityMedium, greaterThan(0));
-      expect(AppSizes.opacityMedium, lessThanOrEqualTo(1));
-      expect(AppSizes.opacityHeavy, greaterThan(0));
-      expect(AppSizes.opacityHeavy, lessThanOrEqualTo(1));
+      expect(AppOpacity.light, greaterThan(0));
+      expect(AppOpacity.light, lessThanOrEqualTo(1));
+      expect(AppOpacity.medium, greaterThan(0));
+      expect(AppOpacity.medium, lessThanOrEqualTo(1));
+      expect(AppOpacity.heavy, greaterThan(0));
+      expect(AppOpacity.heavy, lessThanOrEqualTo(1));
     });
   });
 

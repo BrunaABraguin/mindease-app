@@ -35,6 +35,9 @@ class _TimerPageState extends State<TimerPage> {
         onFocusSessionCompleted: (minutes) async {
           ctx.read<ProfileCubit>().addFocusMinutes(minutes);
         },
+        onMissionTriggered: (missionId) async {
+          ctx.read<ProfileCubit>().tryCompleteMission(missionId);
+        },
       ),
       child: const TimerView(),
     );
@@ -99,6 +102,9 @@ class _TimerViewState extends State<TimerView> {
             child: Container(
               constraints: BoxConstraints(
                 maxWidth: getResponsiveMaxWidth(context),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSizes.paddingM,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
