@@ -103,6 +103,9 @@ class _TimerViewState extends State<TimerView> {
               constraints: BoxConstraints(
                 maxWidth: getResponsiveMaxWidth(context),
               ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSizes.paddingM,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
