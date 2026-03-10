@@ -25,7 +25,7 @@ class EmptyHabitsState extends StatelessWidget {
             Icon(
               Icons.checklist_rounded,
               size: 64,
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
             ),
             const SizedBox(height: AppSizes.spacingM),
             Text(

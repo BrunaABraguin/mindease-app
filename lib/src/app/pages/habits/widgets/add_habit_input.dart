@@ -41,9 +41,7 @@ class _AddHabitInputState extends State<AddHabitInput> {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: colorScheme.secondary.withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: colorScheme.secondary.withValues(alpha: 0.7)),
       ),
       child: Row(
         children: [

@@ -50,7 +50,7 @@ class HabitCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.3)),
+        side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.6)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.paddingM),
@@ -152,7 +152,7 @@ class HabitCard extends StatelessWidget {
             Text(
               _dayLabels[index],
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurface.withValues(alpha: 0.6),
+                color: colorScheme.onSurface.withValues(alpha: 0.85),
                 fontSize: 11,
               ),
             ),
@@ -168,7 +168,7 @@ class HabitCard extends StatelessWidget {
                   border: Border.all(
                     color: hasRecord
                         ? colorScheme.secondary
-                        : colorScheme.secondary.withValues(alpha: 0.4),
+                        : colorScheme.secondary.withValues(alpha: 0.65),
                     width: isSelected || isToday
                         ? AppSizes.borderWidthThick
                         : AppSizes.borderWidthThin,
