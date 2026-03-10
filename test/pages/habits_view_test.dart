@@ -1,31 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:mindease_app/src/app/pages/habits/habits_view.dart';
-import 'package:mindease_app/src/app/utils/app_constants.dart';
+import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
+import 'package:mindease_app/src/app/widgets/login_required_message.dart';
+import 'package:mindease_app/src/domain/repositories/habit_repository.dart';
+import 'package:mocktail/mocktail.dart';
+
+import '../mocks/fake_auth_usecases.dart';
+import '../mocks/fake_profile_repository.dart';
+import '../mocks/mock_preferences_repository.dart';
+
+class MockHabitRepository extends Mock implements HabitRepository {}
 
 void main() {
+  setUpAll(() async {
+    await initializeDateFormatting('pt_BR');
+  });
   group('HabitsPage', () {
-    testWidgets('deve renderizar ícone e texto de hábitos', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(home: HabitsPage()),
+    testWidgets('deve exibir mensagem de login quando não logado', (
+      tester,
+    ) async {
+      final profileCubit = ProfileCubit(
+        preferencesRepository: MockPreferencesRepository(),
+        profileRepository: FakeProfileRepository(),
+        getAuthState: FakeGetAuthStateUseCase(),
+        signInWithGoogle: FakeSignInWithGoogleUseCase(),
+        signOut: FakeSignOutUseCase(),
       );
-
-      expect(find.byIcon(AppIcons.habits), findsOneWidget);
-      expect(find.text(AppStrings.habits), findsOneWidget);
-    });
-
-    testWidgets('deve usar cor primária do tema no ícone', (tester) async {
+      final habitRepository = MockHabitRepository();
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+          home: BlocProvider<ProfileCubit>.value(
+            value: profileCubit,
+            child: HabitsPage(habitRepository: habitRepository),
           ),
-          home: const HabitsPage(),
         ),
       );
+      await tester.pumpAndSettle();
 
-      final icon = tester.widget<Icon>(find.byIcon(AppIcons.habits));
-      expect(icon.size, AppSizes.iconLarge);
+      expect(find.byType(LoginRequiredMessage), findsOneWidget);
+    });
+
+    testWidgets('deve exibir lista de hábitos quando logado', (tester) async {
+      final profileCubit = ProfileCubit(
+        preferencesRepository: MockPreferencesRepository(),
+        profileRepository: FakeProfileRepository(),
+        getAuthState: LoggedInFakeGetAuthStateUseCase(),
+        signInWithGoogle: FakeSignInWithGoogleUseCase(),
+        signOut: FakeSignOutUseCase(),
+      );
+      final habitRepository = MockHabitRepository();
+      when(
+        () => habitRepository.habitsStream(any()),
+      ).thenAnswer((_) => Stream.value([]));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<ProfileCubit>.value(
+            value: profileCubit,
+            child: HabitsPage(habitRepository: habitRepository),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(LoginRequiredMessage), findsNothing);
     });
   });
 }

@@ -4,10 +4,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:mindease_app/firebase_options.dart';
 import 'package:mindease_app/src/app/navigator.dart';
 import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
 import 'package:mindease_app/src/data/di/auth_di.dart';
+import 'package:mindease_app/src/data/di/habit_di.dart';
 import 'package:mindease_app/src/data/di/profile_di.dart';
 import 'package:mindease_app/src/data/repositories/preferences_repository.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
@@ -17,6 +20,7 @@ import 'package:mindease_app/theme.dart';
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
+    await initializeDateFormatting('pt_BR');
     await dotenv.load(fileName: "env");
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -103,8 +107,20 @@ class AppView extends StatelessWidget {
         final timerRepository = context.read<repo.TimerRepository>();
         return MaterialApp(
           debugShowCheckedModeBanner: false,
+          locale: const Locale('pt', 'BR'),
+          supportedLocales: const [
+            Locale('pt', 'BR'),
+          ],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           theme: isDark ? AppTheme.darkTheme : AppTheme.lightTheme,
-          home: AppNavigator(timerRepository: timerRepository),
+          home: AppNavigator(
+            timerRepository: timerRepository,
+            habitRepository: habitRepository,
+          ),
         );
       },
     );

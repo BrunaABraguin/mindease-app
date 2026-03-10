@@ -160,6 +160,7 @@ void main() {
 
       test('different type returns false', () {
         const profile = Profile(userEmail: 'a@b.com');
+        // ignore: unrelated_type_equality_checks
         expect(profile == 'not a profile', isFalse);
       });
     });

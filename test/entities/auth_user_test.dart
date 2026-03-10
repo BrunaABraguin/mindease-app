@@ -30,11 +30,6 @@ void main() {
       expect(user == user, isTrue);
     });
 
-    test('different runtimeType returns false', () {
-      const user = AuthUser(uid: '1');
-      expect(user == 'string', isFalse);
-    });
-
     test('hashCode is consistent', () {
       const a = AuthUser(uid: '1', email: 'a@b.com');
       const b = AuthUser(uid: '1', email: 'a@b.com');

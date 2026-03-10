@@ -8,6 +8,7 @@ import 'package:mindease_app/src/data/repositories/timer_repository.dart'
 import 'package:mindease_app/theme.dart';
 
 import '../mocks/fake_auth_usecases.dart';
+import '../mocks/fake_habit_repository.dart';
 import '../mocks/fake_profile_repository.dart';
 import '../repositories/fake_preferences_repository.dart';
 
@@ -33,7 +34,10 @@ void main() {
             signInWithGoogle: FakeSignInWithGoogleUseCase(),
             signOut: FakeSignOutUseCase(),
           ),
-          child: AppNavigator(timerRepository: repo.TimerRepository()),
+          child: AppNavigator(
+            timerRepository: repo.TimerRepository(),
+            habitRepository: FakeHabitRepository(),
+          ),
         ),
       ),
     );

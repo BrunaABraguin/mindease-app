@@ -37,14 +37,18 @@ dependencies:
   # Firebase dependencies
   firebase_auth: ^6.2.0
   firebase_core: ^4.5.0
+
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
-  flutter_clean_architecture: ^6.2.0
-  flutter_dotenv: ^6.0.0
-
-  #hooks
+  flutter_clean_architecture: ^6.2.0  
+  flutter_dotenv: ^6.0.0  
   flutter_hooks: ^0.21.3+1
+
+  # Localization support — version is tied to the Flutter SDK (^3.11.0)
+  flutter_localizations:
+    sdk: flutter
+
   get_it: ^9.2.1
 
   #google sign in
@@ -53,7 +57,6 @@ dependencies:
   #date format
   intl: ^0.20.2
 
-  #local storage
   shared_preferences: ^2.5.4
 
 
@@ -64,6 +67,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.6.3
+  mocktail: ^1.0.4
 
 
 # For information on the generic Dart part of this file, see the
