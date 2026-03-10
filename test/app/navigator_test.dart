@@ -8,6 +8,7 @@ import 'package:mindease_app/src/data/repositories/timer_repository.dart';
 import '../mocks/fake_auth_usecases.dart';
 import '../mocks/fake_habit_repository.dart';
 import '../mocks/fake_profile_repository.dart';
+import '../mocks/fake_task_repository.dart';
 import '../mocks/mock_preferences_repository.dart';
 
 void main() {
@@ -24,6 +25,7 @@ void main() {
       signOut: FakeSignOutUseCase(),
     );
     final fakeHabitRepo = FakeHabitRepository();
+    final fakeTaskRepo = FakeTaskRepository();
     await tester.pumpWidget(
       MaterialApp(
         home: BlocProvider<ProfileCubit>.value(
@@ -31,6 +33,7 @@ void main() {
           child: AppNavigator(
             timerRepository: TimerRepository(),
             habitRepository: fakeHabitRepo,
+            taskRepository: fakeTaskRepo,
           ),
         ),
       ),

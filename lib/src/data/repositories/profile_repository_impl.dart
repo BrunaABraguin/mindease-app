@@ -64,6 +64,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
+  Future<void> incrementTotalTasks(String userEmail) async {
+    await _collection.doc(userEmail).set({
+      'totalTasks': FieldValue.increment(1),
+    }, SetOptions(merge: true));
+  }
+
+  @override
   Future<void> completeMission(
     String userEmail,
     String missionId,

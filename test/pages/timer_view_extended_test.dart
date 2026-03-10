@@ -7,6 +7,7 @@ import 'package:mindease_app/src/data/repositories/timer_repository.dart';
 
 import '../mocks/fake_auth_usecases.dart';
 import '../mocks/fake_profile_repository.dart';
+import '../mocks/fake_task_repository.dart';
 import '../mocks/mock_preferences_repository.dart';
 
 void main() {
@@ -30,7 +31,10 @@ void main() {
         MaterialApp(
           home: BlocProvider<ProfileCubit>.value(
             value: profileCubit,
-            child: TimerPage(timerRepository: TimerRepository()),
+            child: TimerPage(
+              timerRepository: TimerRepository(),
+              taskRepository: FakeTaskRepository(),
+            ),
           ),
         ),
       );
@@ -44,7 +48,10 @@ void main() {
         MaterialApp(
           home: BlocProvider<ProfileCubit>.value(
             value: profileCubit,
-            child: TimerPage(timerRepository: TimerRepository()),
+            child: TimerPage(
+              timerRepository: TimerRepository(),
+              taskRepository: FakeTaskRepository(),
+            ),
           ),
         ),
       );
@@ -58,7 +65,10 @@ void main() {
         MaterialApp(
           home: BlocProvider<ProfileCubit>.value(
             value: profileCubit,
-            child: TimerPage(timerRepository: TimerRepository()),
+            child: TimerPage(
+              timerRepository: TimerRepository(),
+              taskRepository: FakeTaskRepository(),
+            ),
           ),
         ),
       );

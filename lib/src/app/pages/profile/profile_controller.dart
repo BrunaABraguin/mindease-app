@@ -108,6 +108,12 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(preferences: updated));
   }
 
+  Future<void> setSelectedTaskId(String? taskId) async {
+    final updated = state.preferences.copyWith(selectedTaskId: taskId);
+    await _repo.savePreferences(updated);
+    emit(state.copyWith(preferences: updated));
+  }
+
   Future<void> addFocusMinutes(int minutes) async {
     final profile = state.profile;
     if (profile == null) return;
@@ -121,6 +127,12 @@ class ProfileCubit extends Cubit<ProfileState> {
         profile.totalFocusMinutes + minutes >= 30) {
       await tryCompleteMission('timer_30_min');
     }
+  }
+
+  Future<void> incrementTotalTasks() async {
+    final profile = state.profile;
+    if (profile == null) return;
+    await _profileRepo.incrementTotalTasks(profile.userEmail);
   }
 
   /// Completes a mission if it is valid and not yet completed.

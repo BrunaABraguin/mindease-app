@@ -29,6 +29,19 @@ class CycleCompletedMessage extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: AppSizes.spacingXs),
+              ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppSizes.cycleCompletedMaxWidth,
+                ),
+                child: Text(
+                  HelpTexts.pauseMessage,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.tertiary,
+                  ),
+                ),
+              ),
             ],
           );
         },

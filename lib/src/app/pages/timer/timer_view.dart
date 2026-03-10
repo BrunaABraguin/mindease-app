@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindease_app/src/app/pages/focus_mode/focus_mode_view.dart';
 import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
+import 'package:mindease_app/src/app/pages/tasks/tasks_controller.dart';
 import 'package:mindease_app/src/app/pages/timer/timer_controller.dart';
 import 'package:mindease_app/src/app/pages/timer/widgets/settings_sessions.dart';
 import 'package:mindease_app/src/app/pages/timer/widgets/timer_control_buttons.dart';
@@ -13,14 +14,21 @@ import 'package:mindease_app/src/app/utils/layout_utils.dart';
 import 'package:mindease_app/src/app/widgets/focus_mode_button.dart';
 import 'package:mindease_app/src/app/widgets/help_icon_button.dart';
 import 'package:mindease_app/src/app/widgets/timer_display.dart';
+import 'package:mindease_app/src/app/widgets/timer_task_selector.dart';
 import 'package:mindease_app/src/app/widgets/vertical_timer_progress.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
 import 'package:mindease_app/src/domain/entities/timer_entity.dart';
+import 'package:mindease_app/src/domain/repositories/task_repository.dart';
 
 class TimerPage extends StatefulWidget {
-  const TimerPage({super.key, required this.timerRepository});
+  const TimerPage({
+    super.key,
+    required this.timerRepository,
+    required this.taskRepository,
+  });
   final repo.TimerRepository timerRepository;
+  final TaskRepository taskRepository;
 
   @override
   State<TimerPage> createState() => _TimerPageState();
@@ -29,16 +37,41 @@ class TimerPage extends StatefulWidget {
 class _TimerPageState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => TimerCubit(
-        timerRepository: widget.timerRepository,
-        onFocusSessionCompleted: (minutes) async {
-          ctx.read<ProfileCubit>().addFocusMinutes(minutes);
-        },
-        onMissionTriggered: (missionId) async {
-          ctx.read<ProfileCubit>().tryCompleteMission(missionId);
-        },
-      ),
+    final userEmail = context.select<ProfileCubit, String?>(
+      (cubit) => cubit.state.user?.email,
+    );
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (ctx) => TasksCubit(
+            taskRepository: widget.taskRepository,
+            userEmail: userEmail,
+          ),
+        ),
+        BlocProvider(
+          create: (ctx) {
+            final savedTaskId = ctx
+                .read<ProfileCubit>()
+                .state
+                .preferences
+                .selectedTaskId;
+            final cubit = TimerCubit(
+              timerRepository: widget.timerRepository,
+              onFocusSessionCompleted: (minutes) async {
+                ctx.read<ProfileCubit>().addFocusMinutes(minutes);
+              },
+              onMissionTriggered: (missionId) async {
+                ctx.read<ProfileCubit>().tryCompleteMission(missionId);
+              },
+              onTaskFocusCompleted: (taskId, minutes) async {
+                ctx.read<TasksCubit>().addSpendTime(taskId, minutes);
+              },
+            );
+            if (savedTaskId != null) cubit.selectedTaskId = savedTaskId;
+            return cubit;
+          },
+        ),
+      ],
       child: const TimerView(),
     );
   }
@@ -138,36 +171,54 @@ class _TimerViewState extends State<TimerView> {
                         cubit.getTotalSeconds(timer: state),
                   ),
                   Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TimerDisplay(
-                          timer: state,
-                          isRunning: state.isRunning,
-                          onIncrement: () => cubit.incrementSessionDuration(),
-                          onDecrement: () => cubit.decrementSessionDuration(),
-                          onSetValue: (value) => cubit.setTimerFromInput(value),
-                          showAnimations: context
-                              .read<ProfileCubit>()
-                              .state
-                              .preferences
-                              .showAnimations,
-                        ),
-                        // Controle de ciclos logo abaixo
-                        const SizedBox(height: 24),
-                        SettingsSessions(
-                          currentCycle: state.currentCycle,
-                          totalCycles: state.totalCycles,
-                          isRunning: state.isRunning,
-                          onIncrement: () =>
-                              cubit.updateTotalCycles(state.totalCycles + 1),
-                          onDecrement: () =>
-                              cubit.updateTotalCycles(state.totalCycles - 1),
-                          iconColor: gold,
-                          showCompletedMessage:
-                              state.currentCycle == state.totalCycles,
-                        ),
-                      ],
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return SingleChildScrollView(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: constraints.maxHeight,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                TimerDisplay(
+                                  timer: state,
+                                  isRunning: state.isRunning,
+                                  onIncrement: () =>
+                                      cubit.incrementSessionDuration(),
+                                  onDecrement: () =>
+                                      cubit.decrementSessionDuration(),
+                                  onSetValue: (value) =>
+                                      cubit.setTimerFromInput(value),
+                                  showAnimations: context
+                                      .read<ProfileCubit>()
+                                      .state
+                                      .preferences
+                                      .showAnimations,
+                                ),
+                                // Controle de ciclos logo abaixo
+                                const SizedBox(height: 24),
+                                SettingsSessions(
+                                  currentCycle: state.currentCycle,
+                                  totalCycles: state.totalCycles,
+                                  isRunning: state.isRunning,
+                                  onIncrement: () => cubit.updateTotalCycles(
+                                    state.totalCycles + 1,
+                                  ),
+                                  onDecrement: () => cubit.updateTotalCycles(
+                                    state.totalCycles - 1,
+                                  ),
+                                  iconColor: gold,
+                                  showCompletedMessage:
+                                      state.currentCycle == state.totalCycles,
+                                ),
+                                const SizedBox(height: AppSizes.spacingM),
+                                const TimerTaskSelector(),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   Padding(

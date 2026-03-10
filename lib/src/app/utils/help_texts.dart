@@ -14,11 +14,18 @@ class HelpTexts {
       'Cada ciclo representa uma sessão de foco. Ao completar um ciclo, você pode fazer uma pausa e iniciar o próximo. O progresso é indicado por Sessão atual em Total de sessões.';
 
   static const String cyclesCompletedMessage =
-      'Parabéns! Você completou todos os ciclos 🎉 Faça uma pausa e recarregue suas energias!';
+      'Você completou todos os ciclos 🎉';
+
+  static const String pauseMessage =
+      'Faça uma pausa e recarregue suas energias!';
 
   static const String habitsTitle = 'Hábitos';
   static const String habitsDescription =
       'Acompanhe seus hábitos diários marcando os dias da semana em que você os realizou. Adicione novos hábitos, edite ou exclua conforme necessário.';
+
+  static const String taskSelectorTitle = 'Tarefa associada';
+  static const String taskSelectorDescription =
+      'Vincule uma tarefa pendente ao timer. O tempo de foco será contabilizado na tarefa selecionada.';
 
   static const String addHabitTitle = 'Adicionar hábito';
   static const String addHabitDescription =

@@ -10,6 +10,7 @@ import 'package:mindease_app/theme.dart';
 import '../mocks/fake_auth_usecases.dart';
 import '../mocks/fake_habit_repository.dart';
 import '../mocks/fake_profile_repository.dart';
+import '../mocks/fake_task_repository.dart';
 import '../repositories/fake_preferences_repository.dart';
 
 void main() {
@@ -37,6 +38,7 @@ void main() {
           child: AppNavigator(
             timerRepository: repo.TimerRepository(),
             habitRepository: FakeHabitRepository(),
+            taskRepository: FakeTaskRepository(),
           ),
         ),
       ),

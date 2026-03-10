@@ -8,6 +8,7 @@ import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
 import 'package:mindease_app/src/domain/repositories/habit_repository.dart';
+import 'package:mindease_app/src/domain/repositories/task_repository.dart';
 
 /// Main adaptive navigation shell for the app.
 ///
@@ -17,6 +18,7 @@ class AppNavigator extends StatefulWidget {
     super.key,
     required this.timerRepository,
     required this.habitRepository,
+    required this.taskRepository,
   });
 
   /// The timer repository to use.
@@ -24,6 +26,9 @@ class AppNavigator extends StatefulWidget {
 
   /// The habit repository to use.
   final HabitRepository habitRepository;
+
+  /// The task repository to use.
+  final TaskRepository taskRepository;
 
   /// Switches the active navigation tab from a descendant context.
   static void switchTab(BuildContext context, int index) {
@@ -179,17 +184,23 @@ class _AppNavigatorState extends State<AppNavigator> {
   Widget _buildPage(int index) {
     switch (index) {
       case 0:
-        return TimerPage(timerRepository: widget.timerRepository);
+        return TimerPage(
+          timerRepository: widget.timerRepository,
+          taskRepository: widget.taskRepository,
+        );
       case 1:
         return HabitsPage(habitRepository: widget.habitRepository);
       case 2:
-        return const TasksPage();
+        return TasksPage(taskRepository: widget.taskRepository);
       case 3:
         return const MissionsPage();
       case 4:
         return const ProfilePage();
       default:
-        return TimerPage(timerRepository: widget.timerRepository);
+        return TimerPage(
+          timerRepository: widget.timerRepository,
+          taskRepository: widget.taskRepository,
+        );
     }
   }
 
