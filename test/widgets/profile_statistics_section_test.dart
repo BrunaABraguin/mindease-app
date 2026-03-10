@@ -30,7 +30,7 @@ void main() {
       expect(find.text('Tempo de foco'), findsOneWidget);
       expect(find.text('15'), findsOneWidget);
       expect(find.text('Tarefas concluídas'), findsOneWidget);
-      expect(find.text('0/${totalMissionsCount}'), findsOneWidget);
+      expect(find.text('0/$totalMissionsCount'), findsOneWidget);
       expect(find.text('Missões finalizadas'), findsOneWidget);
       expect(find.text('7'), findsOneWidget);
       expect(find.text('Sequência'), findsOneWidget);
@@ -53,7 +53,7 @@ void main() {
       // Tasks completed and sequence cards should both display "0" when profile stats are zero.
       expect(find.text('0'), findsNWidgets(2));
 
-      expect(find.text('0/${totalMissionsCount}'), findsOneWidget);
+      expect(find.text('0/$totalMissionsCount'), findsOneWidget);
     });
   });
 }
