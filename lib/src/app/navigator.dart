@@ -25,6 +25,18 @@ class AppNavigator extends StatefulWidget {
   /// The habit repository to use.
   final HabitRepository habitRepository;
 
+  /// Switches the active navigation tab from a descendant context.
+  static void switchTab(BuildContext context, int index) {
+    final state = context.findAncestorStateOfType<_AppNavigatorState>();
+    assert(
+      state != null,
+      'AppNavigator.switchTab was called with a context that does not contain an AppNavigator.\n'
+      'Make sure the provided BuildContext is a descendant of AppNavigator.',
+    );
+
+    state!.onSelect(index);
+  }
+
   @override
   State<AppNavigator> createState() => _AppNavigatorState();
 }
@@ -113,7 +125,7 @@ class _AppNavigatorState extends State<AppNavigator> {
                 border: Border(
                   top: BorderSide(
                     color: colorScheme.tertiary.withValues(
-                      alpha: AppSizes.opacityLight,
+                      alpha: AppOpacity.light,
                     ),
                     width: AppSizes.borderWidthMedium,
                   ),

@@ -35,6 +35,9 @@ class _TimerPageState extends State<TimerPage> {
         onFocusSessionCompleted: (minutes) async {
           ctx.read<ProfileCubit>().addFocusMinutes(minutes);
         },
+        onMissionTriggered: (missionId) async {
+          ctx.read<ProfileCubit>().tryCompleteMission(missionId);
+        },
       ),
       child: const TimerView(),
     );

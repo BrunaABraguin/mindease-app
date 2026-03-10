@@ -58,11 +58,6 @@ class AppSizes {
   static const double breakpointTablet = 840.0;
   static const double breakpointDesktop = 1280.0;
 
-  // Opacity
-  static const double opacityLight = 0.75;
-  static const double opacityMedium = 0.5;
-  static const double opacityHeavy = 0.25;
-
   // Font sizes
   static const double cycleFontSize = 20.0;
   static const double timerFontSize = 80.0;
@@ -86,4 +81,10 @@ class AppSizes {
   static const double focusModeLetterSpacing = 2.0;
   static const double focusModeProgressWidthFactor = 0.6;
   static const double elevationNone = 0.0;
+
+  // Mission badge
+  static const double badgeSize = 64.0;
+  static const double badgeIconSize = 28.0;
+  static const double sectionLabelLetterSpacing = 1.2;
+  static const double contentMaxWidth = 480.0;
 }

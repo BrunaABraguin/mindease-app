@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_app/src/app/utils/app_assets.dart';
-import 'package:mindease_app/src/app/utils/app_sizes.dart';
+import 'package:mindease_app/src/app/utils/app_constants.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   const GoogleSignInButton({
@@ -22,7 +22,7 @@ class GoogleSignInButton extends StatelessWidget {
           vertical: AppSizes.paddingS,
         ),
         side: BorderSide(
-          color: colorScheme.outline.withValues(alpha: AppSizes.opacityHeavy),
+          color: colorScheme.outline.withValues(alpha: AppOpacity.heavy),
         ),
         backgroundColor: colorScheme.surface,
         shape: RoundedRectangleBorder(

@@ -47,6 +47,13 @@ class StreamableProfileRepository implements ProfileRepository {
     updateStreakCalls++;
   }
 
+  @override
+  Future<void> completeMission(
+    String userEmail,
+    String missionId,
+    DateTime? lastCompletionDate,
+  ) async {}
+
   void dispose() {
     for (final c in _controllers.values) {
       c.close();
@@ -90,9 +97,9 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 50));
 
       // Now emit a profile via the stream
-      profileRepo.controllerFor('test@test.com').add(
-        const Profile(userEmail: 'test@test.com', strikeDays: 7),
-      );
+      profileRepo
+          .controllerFor('test@test.com')
+          .add(const Profile(userEmail: 'test@test.com', strikeDays: 7));
       await Future.delayed(const Duration(milliseconds: 50));
 
       expect(cubit.state.profile, isNotNull);
@@ -113,10 +120,7 @@ void main() {
 
     test('clears profile when user email is null', () async {
       // First set a user
-      authRepo.userToReturn = const AuthUser(
-        uid: '1',
-        email: 'test@test.com',
-      );
+      authRepo.userToReturn = const AuthUser(uid: '1', email: 'test@test.com');
       await cubit.signInWithGoogle();
       await Future.delayed(const Duration(milliseconds: 50));
 
@@ -133,9 +137,9 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 50));
 
       // Emit an error on the profile stream
-      profileRepo.controllerFor('error@test.com').addError(
-        Exception('Firestore error'),
-      );
+      profileRepo
+          .controllerFor('error@test.com')
+          .addError(Exception('Firestore error'));
       await Future.delayed(const Duration(milliseconds: 50));
 
       // Should not crash - cubit should still be open

@@ -28,30 +28,29 @@ class AddHabitButton extends StatelessWidget {
       return AddHabitInput(onSave: onSave, onCancel: onCancel);
     }
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Expanded(
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onStartAdding,
-              borderRadius: BorderRadius.circular(12),
-              child: DecoratedBox(
-                decoration: DottedBorderDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: colorScheme.secondary,
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onStartAdding,
+            borderRadius: BorderRadius.circular(12),
+            child: DecoratedBox(
+              decoration: DottedBorderDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: colorScheme.secondary,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppSizes.paddingS,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: AppSizes.paddingS,
-                  ),
-                  child: Center(
-                    child: Text(
-                      AppStrings.addNewHabit,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: colorScheme.secondary,
-                        fontWeight: FontWeight.w500,
-                      ),
+                child: Center(
+                  child: Text(
+                    AppStrings.addNewHabit,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: colorScheme.secondary,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
@@ -59,7 +58,7 @@ class AddHabitButton extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: AppSizes.spacingXs),
+        const SizedBox(height: AppSizes.spacingXs),
         const HelpIconButton(
           title: HelpTexts.addHabitTitle,
           description: HelpTexts.addHabitDescription,

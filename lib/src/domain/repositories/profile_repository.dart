@@ -5,5 +5,10 @@ abstract class ProfileRepository {
   Future<void> saveProfile(Profile profile);
   Future<void> incrementFocusMinutes(String userEmail, int minutes);
   Future<void> updateStreak(String userEmail, DateTime? lastCompletionDate);
+  Future<void> completeMission(
+    String userEmail,
+    String missionId,
+    DateTime? lastCompletionDate,
+  );
   Stream<Profile?> profileStream(String userEmail);
 }

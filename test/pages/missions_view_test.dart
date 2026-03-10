@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mindease_app/src/app/pages/missions/missions_view.dart';
 import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
 import 'package:mindease_app/src/app/utils/app_constants.dart';
+import 'package:mindease_app/src/domain/entities/mission.dart';
 
 import '../mocks/fake_auth_usecases.dart';
 import '../mocks/fake_profile_repository.dart';
@@ -23,7 +24,7 @@ void main() {
   });
 
   group('MissionsPage', () {
-    testWidgets('deve renderizar ícone e texto de missões', (tester) async {
+    testWidgets('deve renderizar título e contador de missões', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider<ProfileCubit>.value(
@@ -34,16 +35,16 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(AppIcons.missions), findsOneWidget);
       expect(find.text(AppStrings.missions), findsOneWidget);
+      expect(
+        find.text(AppStrings.missionsProgress(0, totalMissionsCount)),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('deve usar cor primária do tema no ícone', (tester) async {
+    testWidgets('deve renderizar seções de missões', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-          ),
           home: BlocProvider<ProfileCubit>.value(
             value: profileCubit,
             child: const MissionsPage(),
@@ -52,8 +53,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final icon = tester.widget<Icon>(find.byIcon(AppIcons.missions));
-      expect(icon.size, AppSizes.iconLarge);
+      for (final section in appMissions) {
+        expect(find.text(section.title.toUpperCase()), findsOneWidget);
+      }
     });
   });
 }

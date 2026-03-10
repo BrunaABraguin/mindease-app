@@ -9,6 +9,7 @@ class TimerCubit extends Cubit<TimerEntity> {
     required this.timerRepository,
     this.tickDuration = defaultTickDuration,
     this.onFocusSessionCompleted,
+    this.onMissionTriggered,
   }) : super(
          TimerEntity(
            durations: TimerDurations.defaults,
@@ -43,6 +44,7 @@ class TimerCubit extends Cubit<TimerEntity> {
 
   final Duration tickDuration;
   final Future<void> Function(int focusMinutes)? onFocusSessionCompleted;
+  final Future<void> Function(String missionId)? onMissionTriggered;
   void resetTimer() {
     final int total = getTotalSeconds();
     final updatedState = state.copyWith(
@@ -110,6 +112,10 @@ class TimerCubit extends Cubit<TimerEntity> {
         final updatedState = state.copyWith(currentCycle: incrementedCycle);
         emit(updatedState);
         await timerRepository.saveTimerEntity(updatedState);
+
+        if (incrementedCycle >= state.totalCycles) {
+          await onMissionTriggered?.call('timer_long_break');
+        }
       }
     }
     // Timer terminou, pode adicionar lógica extra aqui se quiser

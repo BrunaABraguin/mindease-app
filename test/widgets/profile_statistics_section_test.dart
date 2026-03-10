@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mindease_app/src/app/widgets/profile_statistics_section.dart';
+import 'package:mindease_app/src/app/pages/profile/widgets/profile_statistics_section.dart';
+import 'package:mindease_app/src/domain/entities/mission.dart';
 import 'package:mindease_app/src/domain/entities/profile.dart';
 
 void main() {
@@ -29,7 +30,7 @@ void main() {
       expect(find.text('Tempo de foco'), findsOneWidget);
       expect(find.text('15'), findsOneWidget);
       expect(find.text('Tarefas concluídas'), findsOneWidget);
-      expect(find.text('5'), findsOneWidget);
+      expect(find.text('0/${totalMissionsCount}'), findsOneWidget);
       expect(find.text('Missões finalizadas'), findsOneWidget);
       expect(find.text('7'), findsOneWidget);
       expect(find.text('Sequência'), findsOneWidget);
@@ -49,7 +50,10 @@ void main() {
       );
 
       expect(find.text('0m'), findsOneWidget);
-      expect(find.text('0'), findsNWidgets(3));
+      // Tasks completed and sequence cards should both display "0" when profile stats are zero.
+      expect(find.text('0'), findsNWidgets(2));
+
+      expect(find.text('0/${totalMissionsCount}'), findsOneWidget);
     });
   });
 }

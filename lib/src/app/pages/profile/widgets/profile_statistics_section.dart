@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_app/src/app/pages/profile/widgets/stat_card.dart';
+import 'package:mindease_app/src/domain/entities/mission.dart';
 import 'package:mindease_app/src/domain/entities/profile.dart';
 
 class ProfileStatisticsSection extends StatelessWidget {
@@ -26,7 +28,7 @@ class ProfileStatisticsSection extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _StatCard(
+              child: StatCard(
                 icon: Icons.access_time_rounded,
                 iconColor: colorScheme.secondary,
                 value: profile.formattedFocusTime,
@@ -35,7 +37,7 @@ class ProfileStatisticsSection extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _StatCard(
+              child: StatCard(
                 icon: Icons.check_circle_outline,
                 iconColor: colorScheme.primary,
                 value: '${profile.totalTasks}',
@@ -48,16 +50,17 @@ class ProfileStatisticsSection extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _StatCard(
+              child: StatCard(
                 icon: Icons.flag,
                 iconColor: colorScheme.tertiary,
-                value: '${profile.totalMissions}',
+                value:
+                    '${profile.completedMissions.length}/$totalMissionsCount',
                 label: 'Missões finalizadas',
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _StatCard(
+              child: StatCard(
                 icon: Icons.local_fire_department,
                 iconColor: Colors.deepOrange,
                 value: '${profile.strikeDays}',
@@ -67,56 +70,6 @@ class ProfileStatisticsSection extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.icon,
-    required this.iconColor,
-    required this.value,
-    required this.label,
-  });
-
-  final IconData icon;
-  final Color iconColor;
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: iconColor, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

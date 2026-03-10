@@ -33,7 +33,7 @@ class TimerSegmentedButton extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: Opacity(
-            opacity: enabled ? 1.0 : AppSizes.opacityMedium,
+            opacity: enabled ? 1.0 : AppOpacity.medium,
             child: IgnorePointer(
               ignoring: !enabled,
               child: Semantics(
@@ -67,7 +67,7 @@ class TimerSegmentedButton extends StatelessWidget {
                     ) {
                       if (states.contains(WidgetState.disabled)) {
                         return colorScheme.onSurface.withValues(
-                          alpha: AppSizes.opacityMedium,
+                          alpha: AppOpacity.medium,
                         );
                       }
                       if (states.contains(WidgetState.selected)) {
@@ -80,7 +80,7 @@ class TimerSegmentedButton extends StatelessWidget {
                     ) {
                       if (states.contains(WidgetState.disabled)) {
                         return colorScheme.onSurfaceVariant.withValues(
-                          alpha: AppSizes.opacityMedium,
+                          alpha: AppOpacity.medium,
                         );
                       }
                       if (states.contains(WidgetState.selected)) {
@@ -107,14 +107,14 @@ class TimerSegmentedButton extends StatelessWidget {
                   Icons.lock_outline,
                   size: AppSizes.iconSmall,
                   color: Theme.of(context).colorScheme.onSurfaceVariant
-                      .withValues(alpha: AppSizes.opacityMedium),
+                      .withValues(alpha: AppOpacity.medium),
                 ),
                 const SizedBox(width: AppSizes.spacingXs),
                 Text(
                   'Pressione Reiniciar ou Parar para alterar modo',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant
-                        .withValues(alpha: AppSizes.opacityMedium),
+                        .withValues(alpha: AppOpacity.medium),
                     fontStyle: FontStyle.italic,
                   ),
                 ),
