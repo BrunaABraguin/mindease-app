@@ -70,16 +70,26 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> signInWithGoogle() async {
-    final user = await _signInWithGoogle.buildUseCaseFuture(null);
-    emit(state.copyWith(user: user));
-    if (user != null) {
-      await tryCompleteMission('profile_login');
+    emit(state.copyWith(isLoading: true));
+    try {
+      final user = await _signInWithGoogle.buildUseCaseFuture(null);
+      emit(state.copyWith(user: user, isLoading: false));
+      if (user != null) {
+        await tryCompleteMission('profile_login');
+      }
+    } on Object {
+      emit(state.copyWith(isLoading: false));
     }
   }
 
   Future<void> signOut() async {
-    await _signOut.buildUseCaseFuture(null);
-    emit(state.copyWith(user: null));
+    emit(state.copyWith(isLoading: true));
+    try {
+      await _signOut.buildUseCaseFuture(null);
+      emit(state.copyWith(user: null, isLoading: false));
+    } on Object {
+      emit(state.copyWith(isLoading: false));
+    }
   }
 
   Future<void> _loadPreferences() async {
@@ -156,10 +166,16 @@ class ProfileCubit extends Cubit<ProfileState> {
 }
 
 class ProfileState {
-  const ProfileState({required this.preferences, this.user, this.profile});
+  const ProfileState({
+    required this.preferences,
+    this.user,
+    this.profile,
+    this.isLoading = false,
+  });
   final Preferences preferences;
   final AuthUser? user;
   final Profile? profile;
+  final bool isLoading;
 
   static const Object _userNotSpecified = Object();
   static const Object _profileNotSpecified = Object();
@@ -168,6 +184,7 @@ class ProfileState {
     Preferences? preferences,
     Object? user = _userNotSpecified,
     Object? profile = _profileNotSpecified,
+    bool? isLoading,
   }) {
     return ProfileState(
       preferences: preferences ?? this.preferences,
@@ -175,6 +192,7 @@ class ProfileState {
       profile: identical(profile, _profileNotSpecified)
           ? this.profile
           : profile as Profile?,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }

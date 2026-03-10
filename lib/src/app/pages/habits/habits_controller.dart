@@ -76,9 +76,10 @@ class HabitsCubit extends Cubit<HabitsState> {
     if (!_hasValidEmail) return;
     if (name.trim().isEmpty) return;
 
+    emit(state.copyWith(isLoading: true));
     final habit = Habit(id: '', userEmail: _userEmail!, name: name.trim());
     await _habitRepository.addHabit(habit);
-    emit(state.copyWith(isAdding: false));
+    emit(state.copyWith(isAdding: false, isLoading: false));
     await onMissionTriggered?.call('habits_create_first');
   }
 
@@ -91,13 +92,15 @@ class HabitsCubit extends Cubit<HabitsState> {
     );
     if (habit.id.isEmpty) return;
 
+    emit(state.copyWith(isLoading: true));
     await _habitRepository.updateHabit(habit.copyWith(name: newName.trim()));
-    emit(state.copyWith(editingHabitId: ''));
+    emit(state.copyWith(editingHabitId: '', isLoading: false));
   }
 
   Future<void> deleteHabit(String habitId) async {
+    emit(state.copyWith(isLoading: true));
     await _habitRepository.deleteHabit(habitId);
-    emit(state.copyWith(deletingHabitId: ''));
+    emit(state.copyWith(deletingHabitId: '', isLoading: false));
   }
 
   Future<void> toggleRecord(String habitId, DateTime date) async {
@@ -156,6 +159,7 @@ class HabitsState {
     this.isAdding = false,
     this.deletingHabitId = '',
     this.editingHabitId = '',
+    this.isLoading = false,
   });
 
   final List<Habit> habits;
@@ -163,6 +167,7 @@ class HabitsState {
   final bool isAdding;
   final String deletingHabitId;
   final String editingHabitId;
+  final bool isLoading;
 
   static const Object _notSpecified = Object();
 
@@ -172,6 +177,7 @@ class HabitsState {
     bool? isAdding,
     Object? deletingHabitId = _notSpecified,
     Object? editingHabitId = _notSpecified,
+    bool? isLoading,
   }) {
     return HabitsState(
       habits: habits ?? this.habits,
@@ -183,6 +189,7 @@ class HabitsState {
       editingHabitId: identical(editingHabitId, _notSpecified)
           ? this.editingHabitId
           : editingHabitId as String,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }

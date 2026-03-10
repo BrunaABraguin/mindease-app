@@ -25,7 +25,8 @@ void main() {
   });
 
   group('TasksPage', () {
-    testWidgets('deve renderizar summary bar quando logado', (tester) async {
+    testWidgets('deve renderizar empty state quando logado sem tarefas',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider<ProfileCubit>.value(
@@ -36,8 +37,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Prioridades'), findsOneWidget);
-      expect(find.text('Tarefas'), findsOneWidget);
+      expect(
+        find.textContaining('Você ainda não tem tarefas'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('deve mostrar login message quando deslogado', (tester) async {

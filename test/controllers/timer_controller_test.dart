@@ -81,7 +81,10 @@ void main() {
 
   test('startPauseTimer counts down and stops at zero', () async {
     // Set state with small remainingSeconds for fast test
-    final initial = cubit.state.copyWith(remainingSeconds: 3, isRunning: false);
+    final initial = cubit.state.copyWith(
+      remainingSeconds: 3,
+      status: const TimerStatus(),
+    );
     cubit.emit(initial);
 
     await cubit.startPauseTimer();
@@ -122,6 +125,7 @@ void main() {
           savedMinutes = minutes;
         },
       );
+      await Future.delayed(const Duration(milliseconds: 10));
 
       // Set a short focus duration (120 seconds = 2 minutes) for fast test
       final initial = focusCubit.state.copyWith(

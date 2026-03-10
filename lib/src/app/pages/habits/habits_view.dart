@@ -64,51 +64,66 @@ class HabitsView extends StatelessWidget {
                   maxWidth: getResponsiveMaxWidth(context),
                 ),
                 child: isLoggedIn
-                    ? ListView(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSizes.paddingXl,
-                          horizontal: AppSizes.paddingL,
-                        ),
+                    ? Stack(
                         children: [
-                          DateHeader(
-                            selectedDate: selectedDate,
-                            onDatePicked: (date) => cubit.selectDate(date),
-                          ),
-                          const SizedBox(height: AppSizes.spacingM),
-                          AddHabitButton(
-                            isAdding: state.isAdding,
-                            onStartAdding: cubit.startAdding,
-                            onSave: cubit.addHabit,
-                            onCancel: cubit.cancelAdding,
-                          ),
-                          const SizedBox(height: AppSizes.spacingM),
-                          if (state.habits.isEmpty && !state.isAdding)
-                            const EmptyHabitsState(),
-                          ...state.habits.map(
-                            (habit) => Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: AppSizes.spacingS,
-                              ),
-                              child: HabitCard(
-                                habit: habit,
-                                weekDays: weekDays,
+                          ListView(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppSizes.paddingXl,
+                              horizontal: AppSizes.paddingL,
+                            ),
+                            children: [
+                              DateHeader(
                                 selectedDate: selectedDate,
-                                onToggleDay: (day) =>
-                                    cubit.toggleRecord(habit.id, day),
-                                onDelete: () => cubit.startDeleting(habit.id),
-                                onStartEditing: () =>
-                                    cubit.startEditing(habit.id),
-                                onSaveEdit: (newName) =>
-                                    cubit.updateHabitName(habit.id, newName),
-                                onCancelEdit: cubit.cancelEditing,
-                                isEditing: state.editingHabitId == habit.id,
-                                isDeleting: state.deletingHabitId == habit.id,
-                                onConfirmDelete: () =>
-                                    cubit.deleteHabit(habit.id),
-                                onCancelDelete: cubit.cancelDeleting,
+                                onDatePicked: (date) => cubit.selectDate(date),
+                              ),
+                              const SizedBox(height: AppSizes.spacingM),
+                              AddHabitButton(
+                                isAdding: state.isAdding,
+                                onStartAdding: cubit.startAdding,
+                                onSave: cubit.addHabit,
+                                onCancel: cubit.cancelAdding,
+                              ),
+                              const SizedBox(height: AppSizes.spacingM),
+                              if (state.habits.isEmpty && !state.isAdding)
+                                const EmptyHabitsState(),
+                              ...state.habits.map(
+                                (habit) => Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: AppSizes.spacingS,
+                                  ),
+                                  child: HabitCard(
+                                    habit: habit,
+                                    weekDays: weekDays,
+                                    selectedDate: selectedDate,
+                                    onToggleDay: (day) =>
+                                        cubit.toggleRecord(habit.id, day),
+                                    onDelete: () =>
+                                        cubit.startDeleting(habit.id),
+                                    onStartEditing: () =>
+                                        cubit.startEditing(habit.id),
+                                    onSaveEdit: (newName) => cubit
+                                        .updateHabitName(habit.id, newName),
+                                    onCancelEdit: cubit.cancelEditing,
+                                    isEditing: state.editingHabitId == habit.id,
+                                    isDeleting:
+                                        state.deletingHabitId == habit.id,
+                                    onConfirmDelete: () =>
+                                        cubit.deleteHabit(habit.id),
+                                    onCancelDelete: cubit.cancelDeleting,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (state.isLoading)
+                            const Positioned.fill(
+                              child: ColoredBox(
+                                color: Color(0x33000000),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
                               ),
                             ),
-                          ),
                         ],
                       )
                     : const Center(

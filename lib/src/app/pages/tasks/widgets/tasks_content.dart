@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:mindease_app/src/app/pages/tasks/tasks_controller.dart';
+import 'package:mindease_app/src/app/pages/tasks/widgets/empty_tasks_state.dart';
 import 'package:mindease_app/src/app/pages/tasks/widgets/history_toggle_button.dart';
 import 'package:mindease_app/src/app/pages/tasks/widgets/task_section.dart';
 import 'package:mindease_app/src/app/pages/tasks/widgets/tasks_section.dart';
@@ -17,26 +18,41 @@ class TasksContent extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<TasksCubit>();
 
-        return ListView(
-          padding: const EdgeInsets.symmetric(
-            vertical: AppSizes.paddingXl,
-            horizontal: AppSizes.paddingL,
-          ),
+        return Stack(
           children: [
-            TasksSummaryBar(
-              total: state.totalCount,
-              pending: state.pendingCount,
-              completed: state.completedCount,
+            ListView(
+              padding: const EdgeInsets.symmetric(
+                vertical: AppSizes.paddingXl,
+                horizontal: AppSizes.paddingL,
+              ),
+              children: [
+                TasksSummaryBar(
+                  total: state.totalCount,
+                  pending: state.pendingCount,
+                  completed: state.completedCount,
+                ),
+                const SizedBox(height: AppSizes.spacingXs),
+                HistoryToggleButton(
+                  showHistory: state.showHistory,
+                  onPressed: cubit.toggleHistoryView,
+                ),
+                const SizedBox(height: AppSizes.spacingM),
+                if (state.tasks.isEmpty && !state.showHistory)
+                  const EmptyTasksState()
+                else ...[                
+                  _PrioritiesSection(state: state, cubit: cubit),
+                  const SizedBox(height: AppSizes.spacingL),
+                  TasksSection(state: state, cubit: cubit),
+                ],
+              ],
             ),
-            const SizedBox(height: AppSizes.spacingXs),
-            HistoryToggleButton(
-              showHistory: state.showHistory,
-              onPressed: cubit.toggleHistoryView,
-            ),
-            const SizedBox(height: AppSizes.spacingM),
-            _PrioritiesSection(state: state, cubit: cubit),
-            const SizedBox(height: AppSizes.spacingL),
-            TasksSection(state: state, cubit: cubit),
+            if (state.isLoading)
+              const Positioned.fill(
+                child: ColoredBox(
+                  color: Color(0x33000000),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
           ],
         );
       },

@@ -169,7 +169,10 @@ void main() {
 
       final cubit2 = TimerCubit(timerRepository: mockRepo);
       await Future.delayed(const Duration(milliseconds: 50));
-      expect(cubit2.state.durations.shortBreak, TimerDurations.defaultShortBreak);
+      expect(
+        cubit2.state.durations.shortBreak,
+        TimerDurations.defaultShortBreak,
+      );
       await cubit2.close();
     });
 
@@ -195,10 +198,9 @@ void main() {
 
   group('startPauseTimer with zero remaining', () {
     test('resets remaining to total when zero and starts', () async {
-      cubit.emit(cubit.state.copyWith(
-        remainingSeconds: 0,
-        isRunning: false,
-      ));
+      cubit.emit(
+        cubit.state.copyWith(remainingSeconds: 0, status: const TimerStatus()),
+      );
 
       final future = cubit.startPauseTimer();
       await Future.delayed(const Duration(milliseconds: 10));
@@ -217,12 +219,15 @@ void main() {
         timerRepository: mockRepo,
         tickDuration: const Duration(milliseconds: 1),
       );
+      await Future.delayed(const Duration(milliseconds: 10));
 
-      breakCubit.emit(breakCubit.state.copyWith(
-        remainingSeconds: 2,
-        currentModeIndex: TimerCubit.modeLongBreak,
-        currentCycle: 4,
-      ));
+      breakCubit.emit(
+        breakCubit.state.copyWith(
+          remainingSeconds: 2,
+          currentModeIndex: TimerCubit.modeLongBreak,
+          currentCycle: 4,
+        ),
+      );
 
       await breakCubit.startPauseTimer();
       expect(breakCubit.state.currentCycle, 0);

@@ -11,6 +11,7 @@ import 'package:mindease_app/src/app/pages/timer/widgets/timer_segmented_button.
 import 'package:mindease_app/src/app/utils/app_constants.dart';
 import 'package:mindease_app/src/app/utils/help_texts.dart';
 import 'package:mindease_app/src/app/utils/layout_utils.dart';
+import 'package:mindease_app/src/app/widgets/focus_confetti_overlay.dart';
 import 'package:mindease_app/src/app/widgets/focus_mode_button.dart';
 import 'package:mindease_app/src/app/widgets/help_icon_button.dart';
 import 'package:mindease_app/src/app/widgets/timer_display.dart';
@@ -94,154 +95,183 @@ class _TimerViewState extends State<TimerView> {
   @override
   Widget build(BuildContext context) {
     final gold = Theme.of(context).colorScheme.tertiary;
-    return Scaffold(
-      appBar: AppBar(
-        leadingWidth: AppSizes.leadingWidth,
-        leading: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                left: AppSizes.paddingLeftFocusMode,
-              ),
-              child: FocusModeButton(
-                onPressed: () {
-                  final timerCubit = context.read<TimerCubit>();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => BlocProvider.value(
-                        value: timerCubit,
-                        child: const FocusModePage(),
+    return BlocListener<ProfileCubit, ProfileState>(
+      listenWhen: (prev, curr) => prev.user?.email != curr.user?.email,
+      listener: (context, profileState) {
+        context.read<TasksCubit>().updateUserEmail(profileState.user?.email);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leadingWidth: AppSizes.leadingWidth,
+          leading: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: AppSizes.paddingLeftFocusMode,
+                ),
+                child: FocusModeButton(
+                  onPressed: () {
+                    final timerCubit = context.read<TimerCubit>();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider.value(
+                          value: timerCubit,
+                          child: const FocusModePage(),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(width: AppSizes.spacingXs),
-            const HelpIconButton(
-              title: HelpTexts.focusModeTitle,
-              description: HelpTexts.focusModeDescription,
-              size: AppSizes.iconSmall,
-            ),
-          ],
+              const SizedBox(width: AppSizes.spacingXs),
+              const HelpIconButton(
+                title: HelpTexts.focusModeTitle,
+                description: HelpTexts.focusModeDescription,
+                size: AppSizes.iconSmall,
+              ),
+            ],
+          ),
         ),
-      ),
-      body: BlocBuilder<TimerCubit, TimerEntity>(
-        builder: (context, state) {
-          final cubit = context.read<TimerCubit>();
-          return Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: getResponsiveMaxWidth(context),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingM,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        body: BlocBuilder<TimerCubit, TimerEntity>(
+          builder: (context, state) {
+            final cubit = context.read<TimerCubit>();
+            return FocusConfettiOverlay(
+              trigger: state.currentCycle,
+              shouldPlay:
+                  state.currentCycle == state.totalCycles &&
+                  context.read<ProfileCubit>().state.preferences.showAnimations,
+              child: Stack(
                 children: [
-                  const Row(
-                    children: [
-                      Spacer(),
-                      HelpIconButton(
-                        title: HelpTexts.timerTitle,
-                        description: HelpTexts.timerDescription,
-                        size: AppSizes.iconSmall,
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      constraints: BoxConstraints(
+                        maxWidth: getResponsiveMaxWidth(context),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSizes.spacingS),
-                  TimerSegmentedButton(
-                    selectedIndex: state.currentModeIndex,
-                    onChanged: state.isRunning
-                        ? null
-                        : (index) {
-                            cubit.updateCurrentModeIndex(index);
-                          },
-                    disabled: state.isRunning,
-                  ),
-                  const SizedBox(height: AppSizes.spacingL),
-                  VerticalTimerProgress(
-                    totalSeconds: cubit.getTotalSeconds(timer: state),
-                    remainingSeconds:
-                        state.remainingSeconds ??
-                        cubit.getTotalSeconds(timer: state),
-                  ),
-                  Expanded(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return SingleChildScrollView(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: constraints.maxHeight,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                TimerDisplay(
-                                  timer: state,
-                                  isRunning: state.isRunning,
-                                  onIncrement: () =>
-                                      cubit.incrementSessionDuration(),
-                                  onDecrement: () =>
-                                      cubit.decrementSessionDuration(),
-                                  onSetValue: (value) =>
-                                      cubit.setTimerFromInput(value),
-                                  showAnimations: context
-                                      .read<ProfileCubit>()
-                                      .state
-                                      .preferences
-                                      .showAnimations,
-                                ),
-                                // Controle de ciclos logo abaixo
-                                const SizedBox(height: 24),
-                                SettingsSessions(
-                                  currentCycle: state.currentCycle,
-                                  totalCycles: state.totalCycles,
-                                  isRunning: state.isRunning,
-                                  onIncrement: () => cubit.updateTotalCycles(
-                                    state.totalCycles + 1,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSizes.paddingM,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const Row(
+                            children: [
+                              Spacer(),
+                              HelpIconButton(
+                                title: HelpTexts.timerTitle,
+                                description: HelpTexts.timerDescription,
+                                size: AppSizes.iconSmall,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSizes.spacingS),
+                          TimerSegmentedButton(
+                            selectedIndex: state.currentModeIndex,
+                            onChanged: state.isRunning
+                                ? null
+                                : (index) {
+                                    cubit.updateCurrentModeIndex(index);
+                                  },
+                            disabled: state.isRunning,
+                          ),
+                          const SizedBox(height: AppSizes.spacingL),
+                          VerticalTimerProgress(
+                            totalSeconds: cubit.getTotalSeconds(timer: state),
+                            remainingSeconds:
+                                state.remainingSeconds ??
+                                cubit.getTotalSeconds(timer: state),
+                          ),
+                          Expanded(
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SingleChildScrollView(
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minHeight: constraints.maxHeight,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        TimerDisplay(
+                                          timer: state,
+                                          isRunning: state.isRunning,
+                                          onIncrement: () =>
+                                              cubit.incrementSessionDuration(),
+                                          onDecrement: () =>
+                                              cubit.decrementSessionDuration(),
+                                          onSetValue: (value) =>
+                                              cubit.setTimerFromInput(value),
+                                          showAnimations: context
+                                              .read<ProfileCubit>()
+                                              .state
+                                              .preferences
+                                              .showAnimations,
+                                        ),
+                                        // Controle de ciclos logo abaixo
+                                        const SizedBox(height: 24),
+                                        SettingsSessions(
+                                          currentCycle: state.currentCycle,
+                                          totalCycles: state.totalCycles,
+                                          isRunning: state.isRunning,
+                                          onIncrement: () =>
+                                              cubit.updateTotalCycles(
+                                                state.totalCycles + 1,
+                                              ),
+                                          onDecrement: () =>
+                                              cubit.updateTotalCycles(
+                                                state.totalCycles - 1,
+                                              ),
+                                          iconColor: gold,
+                                          showCompletedMessage:
+                                              state.currentCycle ==
+                                              state.totalCycles,
+                                        ),
+                                        const SizedBox(
+                                          height: AppSizes.spacingM,
+                                        ),
+                                        const TimerTaskSelector(),
+                                      ],
+                                    ),
                                   ),
-                                  onDecrement: () => cubit.updateTotalCycles(
-                                    state.totalCycles - 1,
-                                  ),
-                                  iconColor: gold,
-                                  showCompletedMessage:
-                                      state.currentCycle == state.totalCycles,
-                                ),
-                                const SizedBox(height: AppSizes.spacingM),
-                                const TimerTaskSelector(),
-                              ],
+                                );
+                              },
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: AppSizes.timerControlButtonsBottomPadding,
-                    ),
-                    child: Center(
-                      child: TimerControlButtons(
-                        onStartPause: () {
-                          cubit.startPauseTimer();
-                        },
-                        onReset: () {
-                          cubit.resetTimer();
-                        },
-                        isRunning: state.isRunning,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSizes.timerControlButtonsBottomPadding,
+                            ),
+                            child: Center(
+                              child: TimerControlButtons(
+                                onStartPause: () {
+                                  cubit.startPauseTimer();
+                                },
+                                onReset: () {
+                                  cubit.resetTimer();
+                                },
+                                isRunning: state.isRunning,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                  if (state.isLoading)
+                    const Positioned.fill(
+                      child: ColoredBox(
+                        color: Color(0x33000000),
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
                 ],
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

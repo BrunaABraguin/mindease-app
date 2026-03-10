@@ -61,12 +61,14 @@ class _ProfileViewState extends State<ProfileView> {
                         SignOutButton(
                           onPressed: () =>
                               context.read<ProfileCubit>().signOut(),
+                          isLoading: state.isLoading,
                         ),
                       ],
                     ] else ...[
                       GoogleSignInButton(
                         onPressed: () =>
                             context.read<ProfileCubit>().signInWithGoogle(),
+                        isLoading: state.isLoading,
                       ),
                     ],
                     if (user != null) ...[
@@ -89,6 +91,7 @@ class _ProfileViewState extends State<ProfileView> {
                       const SizedBox(height: AppSizes.spacingXl),
                       SignOutButton(
                         onPressed: () => context.read<ProfileCubit>().signOut(),
+                        isLoading: state.isLoading,
                       ),
                     ],
                   ],

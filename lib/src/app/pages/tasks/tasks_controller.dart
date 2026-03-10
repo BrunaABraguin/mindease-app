@@ -68,6 +68,7 @@ class TasksCubit extends Cubit<TasksState> {
       if (currentPriorities >= maxPriorities) return;
     }
 
+    emit(state.copyWith(isLoading: true));
     final task = Task(
       id: '',
       userEmail: _userEmail!,
@@ -75,7 +76,13 @@ class TasksCubit extends Cubit<TasksState> {
       isPriority: isPriority,
     );
     await _taskRepository.addTask(task);
-    emit(state.copyWith(isAddingPriority: false, isAddingTask: false));
+    emit(
+      state.copyWith(
+        isAddingPriority: false,
+        isAddingTask: false,
+        isLoading: false,
+      ),
+    );
   }
 
   Future<void> updateTaskName(String taskId, String newName) async {
@@ -87,17 +94,22 @@ class TasksCubit extends Cubit<TasksState> {
     );
     if (task.id.isEmpty) return;
 
+    emit(state.copyWith(isLoading: true));
     await _taskRepository.updateTask(task.copyWith(name: newName.trim()));
-    emit(state.copyWith(editingTaskId: ''));
+    emit(state.copyWith(editingTaskId: '', isLoading: false));
   }
 
   Future<void> deleteTask(String taskId) async {
+    emit(state.copyWith(isLoading: true));
     await _taskRepository.deleteTask(taskId);
+    emit(state.copyWith(isLoading: false));
   }
 
   Future<void> completeTask(String taskId) async {
+    emit(state.copyWith(isLoading: true));
     await _taskRepository.completeTask(taskId);
     await onTaskCompleted?.call();
+    emit(state.copyWith(isLoading: false));
   }
 
   Future<void> addSpendTime(String taskId, int minutes) async {
@@ -146,6 +158,7 @@ class TasksState {
     this.isAddingTask = false,
     this.editingTaskId = '',
     this.showHistory = false,
+    this.isLoading = false,
   });
 
   final List<Task> tasks;
@@ -153,6 +166,7 @@ class TasksState {
   final bool isAddingTask;
   final String editingTaskId;
   final bool showHistory;
+  final bool isLoading;
 
   List<Task> get pendingPriorities =>
       tasks.where((t) => t.isPriority && !t.isDone).toList();
@@ -182,6 +196,7 @@ class TasksState {
     bool? isAddingTask,
     Object? editingTaskId = _notSpecified,
     bool? showHistory,
+    bool? isLoading,
   }) {
     return TasksState(
       tasks: tasks ?? this.tasks,
@@ -191,6 +206,7 @@ class TasksState {
           ? this.editingTaskId
           : editingTaskId as String,
       showHistory: showHistory ?? this.showHistory,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }
