@@ -102,8 +102,7 @@ class TimerEntity {
     Object? remainingSeconds = _noValue,
     int? completedSessions,
     int? currentModeIndex,
-    bool? isRunning,
-    bool? isLoading,
+    TimerStatus? status,
   }) {
     final int effectiveCurrentCycle = currentCycle ?? this.currentCycle;
     return TimerEntity(
@@ -115,10 +114,7 @@ class TimerEntity {
           : remainingSeconds as int?,
       completedSessions: completedSessions ?? this.completedSessions,
       currentModeIndex: currentModeIndex ?? this.currentModeIndex,
-      status: TimerStatus(
-        isRunning: isRunning ?? this.isRunning,
-        isLoading: isLoading ?? this.isLoading,
-      ),
+      status: status ?? this.status,
     );
   }
 
