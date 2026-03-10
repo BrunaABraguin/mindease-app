@@ -19,13 +19,15 @@ class AppStrings {
   static const String increaseTime = 'Aumentar tempo';
   static const String shortBreakLabel = 'PAUSA CURTA';
   static const String longBreakLabel = 'PAUSA LONGA';
-  static String sessionsUntilLongBreak(int sessions) =>
-      '$sessions sessões até a pausa longa';
 
   // Habits
   static const String addNewHabit = '+ Adicione um novo hábito';
   static const String emptyHabitsMessage =
       'Você ainda não tem hábitos.\nComece adicionando um acima!';
+
+  // Tasks
+  static const String emptyTasksMessage =
+      'Você ainda não tem tarefas.\nComece adicionando uma acima!';
   static const String habitNameHint = 'Nome do hábito';
   static const String confirmDelete = 'Deseja excluir este hábito?';
   static const String yes = 'Sim';

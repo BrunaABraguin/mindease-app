@@ -53,6 +53,7 @@ class TimerEntity {
     required this.completedSessions,
     required this.currentModeIndex,
     this.isRunning = false,
+    this.isLoading = false,
   });
 
   final TimerDurations durations;
@@ -62,6 +63,7 @@ class TimerEntity {
   final int completedSessions;
   final int currentModeIndex;
   final bool isRunning;
+  final bool isLoading;
 
   TimerEntity copyWith({
     TimerDurations? durations,
@@ -71,6 +73,7 @@ class TimerEntity {
     int? completedSessions,
     int? currentModeIndex,
     bool? isRunning,
+    bool? isLoading,
   }) {
     final int effectiveCurrentCycle = currentCycle ?? this.currentCycle;
     return TimerEntity(
@@ -83,6 +86,7 @@ class TimerEntity {
       completedSessions: completedSessions ?? this.completedSessions,
       currentModeIndex: currentModeIndex ?? this.currentModeIndex,
       isRunning: isRunning ?? this.isRunning,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 

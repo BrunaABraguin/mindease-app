@@ -81,6 +81,7 @@ class AppSizes {
   static const double focusModeLetterSpacing = 2.0;
   static const double focusModeProgressWidthFactor = 0.6;
   static const double elevationNone = 0.0;
+  static const double zoltraakImageSize = 540.0;
 
   // Mission badge
   static const double badgeSize = 64.0;

@@ -199,8 +199,12 @@ class TimerCubit extends Cubit<TimerEntity> {
 
   // --- Persistence ---
   Future<void> _loadTimerEntity() async {
+    emit(state.copyWith(isLoading: true));
     final loaded = await timerRepository.loadTimerEntity();
-    if (loaded == null) return;
+    if (loaded == null) {
+      emit(state.copyWith(isLoading: false));
+      return;
+    }
     final corrected = _correctDurations(loaded.durations);
     var correctedState = loaded.copyWith(durations: corrected);
     if (!correctedState.isRunning &&
@@ -209,7 +213,7 @@ class TimerCubit extends Cubit<TimerEntity> {
       final total = getTotalSeconds(timer: correctedState);
       correctedState = correctedState.copyWith(remainingSeconds: total);
     }
-    emit(correctedState);
+    emit(correctedState.copyWith(isLoading: false));
   }
 
   TimerDurations _correctDurations(TimerDurations d) => TimerDurations(
@@ -235,11 +239,13 @@ class TimerCubit extends Cubit<TimerEntity> {
   }
 
   Future<void> updateCurrentModeIndex(int index) async {
+    emit(state.copyWith(isLoading: true));
     final total = getTotalSeconds(modeIndex: index);
     final updatedState = state.copyWith(
       currentModeIndex: index,
       remainingSeconds: total,
       isRunning: false,
+      isLoading: false,
     );
     _emitAndSave(updatedState);
   }

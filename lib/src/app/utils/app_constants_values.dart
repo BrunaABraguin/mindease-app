@@ -10,4 +10,7 @@ class AppConstants {
       timerMaxMinutes * Duration.secondsPerMinute;
 
   static const String kPrefsKeyUserPreferences = 'user_preferences';
+
+  // Focus mode rotation
+  static const int zoltraakRotationSeconds = 20;
 }
