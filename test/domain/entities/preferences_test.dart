@@ -8,6 +8,7 @@ void main() {
         'showHelpIcons': false,
         'showAnimations': false,
         'darkTheme': true,
+        'selectedTaskId': null,
       };
       final prefs = Preferences.fromMap(map);
       expect(prefs.showHelpIcons, false);

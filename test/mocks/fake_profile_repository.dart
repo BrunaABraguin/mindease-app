@@ -62,4 +62,10 @@ class FakeProfileRepository implements ProfileRepository {
     );
     await updateStreak(userEmail, lastCompletionDate);
   }
+
+  @override
+  Future<void> incrementTotalTasks(String userEmail) async {
+    final current = _profile ?? Profile(userEmail: userEmail);
+    _profile = current.copyWith(totalTasks: current.totalTasks + 1);
+  }
 }

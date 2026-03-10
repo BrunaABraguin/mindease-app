@@ -159,12 +159,12 @@ class _TimerDisplayState extends State<TimerDisplay>
             child: AnimatedBuilder(
               animation: _blinkController,
               builder: (context, child) {
+                final blinkOpacity =
+                    _blinkController.value < AppConstants.blinkThreshold
+                        ? AppConstants.blinkMinOpacity
+                        : 1.0;
                 return Opacity(
-                  opacity: _shouldBlink
-                      ? (_blinkController.value < AppConstants.blinkThreshold
-                            ? AppConstants.blinkMinOpacity
-                            : 1.0)
-                      : 1.0,
+                  opacity: _shouldBlink ? blinkOpacity : 1.0,
                   child: GestureDetector(
                     onDoubleTap: widget.isRunning ? null : _startEditing,
                     child: _editing

@@ -10,5 +10,6 @@ abstract class ProfileRepository {
     String missionId,
     DateTime? lastCompletionDate,
   );
+  Future<void> incrementTotalTasks(String userEmail);
   Stream<Profile?> profileStream(String userEmail);
 }

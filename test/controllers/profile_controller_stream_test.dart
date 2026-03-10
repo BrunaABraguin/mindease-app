@@ -54,6 +54,9 @@ class StreamableProfileRepository implements ProfileRepository {
     DateTime? lastCompletionDate,
   ) async {}
 
+  @override
+  Future<void> incrementTotalTasks(String userEmail) async {}
+
   void dispose() {
     for (final c in _controllers.values) {
       c.close();

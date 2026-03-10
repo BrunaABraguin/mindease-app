@@ -12,6 +12,7 @@ import 'package:mindease_app/src/app/pages/profile/profile_controller.dart';
 import 'package:mindease_app/src/data/di/auth_di.dart';
 import 'package:mindease_app/src/data/di/habit_di.dart';
 import 'package:mindease_app/src/data/di/profile_di.dart';
+import 'package:mindease_app/src/data/di/task_di.dart';
 import 'package:mindease_app/src/data/repositories/preferences_repository.dart';
 import 'package:mindease_app/src/data/repositories/timer_repository.dart'
     as repo;
@@ -108,9 +109,7 @@ class AppView extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           locale: const Locale('pt', 'BR'),
-          supportedLocales: const [
-            Locale('pt', 'BR'),
-          ],
+          supportedLocales: const [Locale('pt', 'BR')],
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -120,6 +119,7 @@ class AppView extends StatelessWidget {
           home: AppNavigator(
             timerRepository: timerRepository,
             habitRepository: habitRepository,
+            taskRepository: taskRepository,
           ),
         );
       },
